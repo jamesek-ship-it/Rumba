@@ -52,12 +52,20 @@ Needs accounts (above), an Anthropic API key, and one Supabase Edge Function.
 
 1. **API key.** At console.anthropic.com, add a few dollars of credit under Billing, set a monthly spend
    limit, and create an API key. (This is separate from a Claude subscription.)
-2. **Database.** In the Supabase SQL editor, run `supabase/chat.sql` (the same block that is at the
-   bottom of `supabase/schema.sql`).
+2. **Database.** In the Supabase SQL editor, run `supabase/chat.sql`. It is safe to run again whenever it changes.
 3. **Function.** Supabase > Edge Functions > Deploy a new function > Via Editor. Name it exactly
-   `rumbo-chat`, paste in `supabase/functions/rumbo-chat/index.ts`, and deploy.
+   `rumbo-chat`, paste in `supabase/functions/rumbo-chat/index.ts`, and deploy. To update it later, open the
+   function, paste the new file over the old one, and deploy.
 4. **Secret.** Supabase > Edge Functions > Secrets, add `ANTHROPIC_API_KEY` with your key.
-   Optional: `CHAT_MODEL` to change the model (default `claude-haiku-4-5-20251001`).
 
-The function checks that the caller is signed in, allows 40 messages per person per day (Eastern time,
-change `DAILY_LIMIT` in the function to adjust), and keeps no transcripts.
+**Limits.** Each person gets 100 messages a day, everyone together gets 300 a day, and the day resets at
+midnight Eastern. Defaults live at the top of the function. To change them without editing code, add any of these
+secrets: `CHAT_DAILY_LIMIT`, `CHAT_ALERT_AT` (default 40), `CHAT_GLOBAL_LIMIT`. `CHAT_MODEL` changes the model
+(default `claude-haiku-4-5-20251001`).
+
+**Alerts.** When someone goes past 40 messages in a day, and again when they use their last one, the function sends
+a push notification to your phone through ntfy.sh (free, no account). Install the ntfy app (iPhone or Android),
+subscribe to a long random topic name such as `rumbo-james-x7k2m9q4vw`, and add the same text as the Supabase
+secret `NTFY_TOPIC`. Treat the topic name like a password. Without `NTFY_TOPIC` no alerts are sent.
+
+The function checks that the caller is signed in and keeps no transcripts, only a per-person daily message count.

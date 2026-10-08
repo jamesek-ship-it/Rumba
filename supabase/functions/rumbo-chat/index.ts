@@ -9,14 +9,20 @@
 type Role = "user" | "assistant";
 type Msg = { role: Role; content: string };
 type Coach = { understood: string; better: string; why: string; reply_es: string; reply_en: string };
+type Limits = { daily: number; alertAt: number; global: number };
 type Deps = {
-  getUserId: (token: string) => Promise<string | null>;
-  bump: (uid: string, limit: number) => Promise<number>;   // new count, or -1 when over the limit
+  getUser: (token: string) => Promise<{ id: string; label: string } | null>;
+  bump: (uid: string, limit: number, globalLimit: number) => Promise<number>;   // new count; -1 = personal limit reached; -3 = group-wide limit reached
   refund: (uid: string) => Promise<void>;
   ask: (system: string, messages: Msg[]) => Promise<Coach>;
+  notify?: (text: string) => Promise<void>;   // optional heads-up to the owner
+  limits?: Partial<Limits>;
 };
 
-export const DAILY_LIMIT = 40;
+// Defaults; override with the CHAT_DAILY_LIMIT, CHAT_ALERT_AT and CHAT_GLOBAL_LIMIT secrets.
+export const DAILY_LIMIT = 100;     // messages per person per day
+export const ALERT_AT = 40;         // you get a notification the moment someone goes over this many in a day
+export const GLOBAL_LIMIT = 300;    // messages per day across everyone, a hard ceiling on spend
 const MAX_HISTORY = 14;
 const MAX_USER_CHARS = 400;
 const MAX_REPLY_CHARS = 700;
@@ -92,22 +98,30 @@ export async function handle(req: Request, deps: Deps): Promise<Response> {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return json({ error: "method" }, 405);
   const token = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "").trim();
-  const uid = token ? await deps.getUserId(token).catch(() => null) : null;
-  if (!uid) return json({ error: "auth" }, 401);
+  const user = token ? await deps.getUser(token).catch(() => null) : null;
+  if (!user) return json({ error: "auth" }, 401);
+  const uid = user.id;
+  const L: Limits = { daily: DAILY_LIMIT, alertAt: ALERT_AT, global: GLOBAL_LIMIT, ...(deps.limits || {}) };
   let body: any;
   try { body = await req.json(); } catch { return json({ error: "bad_request" }, 400); }
   const v = validate(body);
   if (!v.ok) return json({ error: v.error }, 400);
 
-  const n = await deps.bump(uid, DAILY_LIMIT).catch(() => -2);
-  if (n === -1) return json({ error: "limit", limit: DAILY_LIMIT }, 429);
+  const n = await deps.bump(uid, L.daily, L.global).catch(() => -2);
+  if (n === -1) return json({ error: "limit", limit: L.daily }, 429);
+  if (n === -3) return json({ error: "busy" }, 429);
   if (n < 0) return json({ error: "server" }, 500);
 
   const opening = v.history.length === 0;
   const messages: Msg[] = [{ role: "user", content: "(The scene begins now. Speak first, in character.)" }, ...v.history];
   try {
     const c = await deps.ask(systemPrompt(v.level, v.country, v.scene, opening), messages);
-    return json({ ok: true, ...c, remaining: Math.max(0, DAILY_LIMIT - n), limit: DAILY_LIMIT });
+    // One heads-up per person per day: the request that takes them past the alert line, and the one that uses their last message.
+    if (deps.notify && (n === L.alertAt + 1 || n === L.daily)) {
+      const who = clean(user.label, 24) || "someone";
+      await deps.notify(n === L.daily ? `${who} used all ${L.daily} practice messages today.` : `${who} is past ${L.alertAt} practice messages today (${n} of ${L.daily}).`).catch(() => {});
+    }
+    return json({ ok: true, ...c, remaining: Math.max(0, L.daily - n), limit: L.daily });
   } catch (_e) {
     await deps.refund(uid).catch(() => {});
     return json({ error: "upstream" }, 502);
@@ -147,10 +161,23 @@ if (typeof Deno !== "undefined" && Deno.serve) {
   const admin = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
   const anon = createClient(url, Deno.env.get("SUPABASE_ANON_KEY") || Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
   const key = Deno.env.get("ANTHROPIC_API_KEY") || "";
+  const num = (name: string, d: number) => { const v = parseInt(Deno.env.get(name) || "", 10); return v > 0 ? v : d; };
+  const limits = { daily: num("CHAT_DAILY_LIMIT", DAILY_LIMIT), alertAt: num("CHAT_ALERT_AT", ALERT_AT), global: num("CHAT_GLOBAL_LIMIT", GLOBAL_LIMIT) };
+  const topic = Deno.env.get("NTFY_TOPIC") || "";
   const model = Deno.env.get("CHAT_MODEL") || "claude-haiku-4-5-20251001";
   Deno.serve((req: Request) => handle(req, {
-    getUserId: async (token) => { const { data, error } = await anon.auth.getUser(token); return error || !data?.user ? null : data.user.id; },
-    bump: async (uid, limit) => { const { data, error } = await admin.rpc("rumbo_chat_bump", { p_user: uid, p_limit: limit }); if (error) throw error; return data as number; },
+    limits,
+    getUser: async (token) => {
+      const { data, error } = await anon.auth.getUser(token);
+      if (error || !data?.user) return null;
+      return { id: data.user.id, label: String(data.user.email || "").split("@")[0] };
+    },
+    bump: async (uid, limit, globalLimit) => { const { data, error } = await admin.rpc("rumbo_chat_bump", { p_user: uid, p_limit: limit, p_global: globalLimit }); if (error) throw error; return data as number; },
+    // Push notification through ntfy.sh (free; install the ntfy app and subscribe to your secret topic). Skipped if NTFY_TOPIC is not set.
+    notify: async (text) => {
+      if (!topic) return;
+      await fetch("https://ntfy.sh/" + encodeURIComponent(topic), { method: "POST", headers: { Title: "Rumbo practice chat" }, body: text, signal: AbortSignal.timeout(4000) });
+    },
     refund: async (uid) => { await admin.rpc("rumbo_chat_refund", { p_user: uid }); },
     ask: (system, messages) => { if (!key) throw new Error("no key"); return askClaude(key, model, system, messages); },
   }));

@@ -1684,7 +1684,8 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
       if (res.error) {
         var st = res.error.context && res.error.context.status, b = null;
         try { b = await res.error.context.json(); } catch (e) {}
-        if (st === 429) return { ok: false, msg: "You have used today's " + ((b && b.limit) || 40) + " practice messages. They reset at midnight Eastern." };
+        if (st === 429 && b && b.error === "busy") return { ok: false, msg: "Practice chat has hit its limit for today. Try again tomorrow." };
+        if (st === 429) return { ok: false, msg: "You have used today's " + ((b && b.limit) || 100) + " practice messages. They reset at midnight Eastern." };
         if (st === 401) return { ok: false, msg: "Please sign in again to keep chatting." };
         if (st === 404) return { ok: false, msg: "Conversation mode is not switched on yet. Ask James to finish the setup." };
         if (st === 502 || st === 500) return { ok: false, msg: "The coach could not answer just now. Your message was not counted. Try again." };
@@ -1767,7 +1768,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
       (CH.pick === "custom" ? '<div class="field"><label for="ch-custom">Describe the situation</label><input id="ch-custom" type="text" maxlength="120" placeholder="e.g. buying a SIM card" value="' + esc(CH.custom) + '" autocomplete="off"></div>' : "") +
       '<div class="field"><label>Level</label><div class="row">' + LEVELS.map(function (l) { return '<button class="chip" data-chlevel="' + l + '" aria-pressed="' + (lv === l) + '">' + l + '</button>'; }).join("") + '</div><small>' + LEVEL_PLAIN[lv][0] + '. ' + LEVEL_PLAIN[lv][1] + '</small></div>' +
       '<div class="row"><button class="btn primary" id="ch-go" data-act="ch-start"' + (ready ? "" : " disabled") + '>Empezar</button></div>' +
-      '<p class="s">Your messages are sent to Claude to generate replies. Conversations are not saved. There is a daily limit of 40 messages.</p></section>';
+      '<p class="s">Your messages are sent to Claude to generate replies. Conversations are not saved. There is a daily practice limit.</p></section>';
   }
   function chatView() {
     if (!CH.started) return chatSetupView();
