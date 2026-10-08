@@ -52,9 +52,8 @@ Needs accounts (above), an Anthropic API key, and one Supabase Edge Function.
 
 1. **API key.** At console.anthropic.com, add a few dollars of credit under Billing, set a monthly spend
    limit, and create an API key. (This is separate from a Claude subscription.)
-2. **Database.** In the Supabase SQL editor, run the "Conversation coach: daily message cap" block at the
-   bottom of `supabase/schema.sql`. (Running the whole file again is also safe for that part only if you
-   skip the earlier `create policy` lines, so the block alone is easier.)
+2. **Database.** In the Supabase SQL editor, run `supabase/chat.sql` (the same block that is at the
+   bottom of `supabase/schema.sql`).
 3. **Function.** Supabase > Edge Functions > Deploy a new function > Via Editor. Name it exactly
    `rumbo-chat`, paste in `supabase/functions/rumbo-chat/index.ts`, and deploy.
 4. **Secret.** Supabase > Edge Functions > Secrets, add `ANTHROPIC_API_KEY` with your key.
