@@ -198,6 +198,12 @@ body { margin: 0; -webkit-text-size-adjust: 100%; padding-top: max(0px, env(safe
 .trip .chip small { margin-left: 4px; }
 @media (max-width: 360px) { .trip .chip small { display: none; } .brand { font-size: 1.25rem; } }
 
+/* iOS Safari gives date inputs an intrinsic width that spills out of the card; pin it to the container */
+.field { min-width: 0; }
+.field input[type=date] { display: block; width: 100%; min-width: 0; max-width: 100%; -webkit-appearance: none; appearance: none; text-align: left; line-height: 1.4; }
+.field input[type=date]::-webkit-date-and-time-value { text-align: left; min-height: 1.4em; }
+.field input[type=date]::-webkit-calendar-picker-indicator { margin-left: auto; }
+
 /* glosses */
 .gl::before { content: " · "; white-space: pre; }
 h1 .gl::before, h2 .gl::before, h3 .gl::before, .stx b .gl::before, .hint .gl::before, .qprompt .gl::before { content: none; }
