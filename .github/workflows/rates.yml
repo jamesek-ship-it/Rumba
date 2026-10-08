@@ -1,0 +1,23 @@
+name: Update exchange rates
+
+on:
+  schedule:
+    - cron: "0 12 * * 1"   # every Monday, 12:00 UTC (8 am Eastern)
+  workflow_dispatch:        # lets you run it by hand from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  rates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch latest rates
+        run: python3 scripts/update_rates.py
+      - name: Commit if changed
+        run: |
+          git config user.name "rates-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add rates.json
+          git diff --cached --quiet || (git commit -m "Update exchange rates" && git push)
