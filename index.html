@@ -187,11 +187,15 @@ body { margin: 0; -webkit-text-size-adjust: 100%; padding-top: max(0px, env(safe
 @keyframes pulse { 50% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--bad) 25%, transparent); } }
 
 /* v3: bottom nav, welcome, phrasebook, show-it, scenes, plan */
-body { padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
+body { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
 body.onb { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
 .nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; justify-content: center; gap: 2px; background: var(--surface); border-top: 1px solid var(--line); padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); }
-.nav button { flex: 1; max-width: 120px; border: 0; background: transparent; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; font-size: 0.72rem; font-weight: 600; color: var(--muted); min-height: 54px; border-radius: 10px; }
+.nav button { flex: 1; max-width: 120px; border: 0; background: transparent; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; font-size: 0.72rem; font-weight: 600; color: var(--muted); min-height: 60px; border-radius: 10px; }
 .nav svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.nav button { gap: 0; }
+.nav svg { margin-bottom: 2px; }
+.nav .nes { line-height: 1.15; }
+.nav .nen { font-size: 0.62rem; font-weight: 500; line-height: 1.15; opacity: 0.55; }
 .nav button[aria-current="page"] { color: var(--accent); background: var(--accent-soft); }
 body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
 .noscroll { overflow: hidden; }
@@ -1065,10 +1069,10 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
   function blanks(h) { return h.replace(/_{3,}/g, '<span class="blank"></span>'); }
 
   function renderNav() {
-    var items = [["home", "Inicio"], ["phrases", "Frases"], ["scenes", "Escenas"], ["study", "Estudiar"], ["progress", "Progreso"]];
+    var items = [["home", "Inicio", "Home"], ["phrases", "Frases", "Phrases"], ["scenes", "Escenas", "Scenes"], ["study", "Estudiar", "Study"], ["progress", "Progreso", "Progress"]];
     $("nav").innerHTML = items.map(function (it) {
       var on = view === it[0] || (it[0] === "home" && view === "level");
-      return '<button data-go="' + it[0] + '"' + (on ? ' aria-current="page"' : "") + '><svg viewBox="0 0 24 24" aria-hidden="true">' + ICONS[it[0]] + '</svg>' + it[1] + '</button>';
+      return '<button data-go="' + it[0] + '"' + (on ? ' aria-current="page"' : "") + '><svg viewBox="0 0 24 24" aria-hidden="true">' + ICONS[it[0]] + '</svg><span class="nes">' + it[1] + '</span><span class="nen">' + it[2] + '</span></button>';
     }).join("");
   }
 
