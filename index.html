@@ -225,6 +225,25 @@ body.noscroll .scroller { overflow: hidden; }
 .nav button { font-size: 0.68rem; padding-inline: 0; }
 .nav .nen { font-size: 0.58rem; }
 
+/* conversation */
+select { font: inherit; color: var(--ink); background: var(--bg); border: 1.5px solid var(--line); border-radius: 10px; padding: 11px 12px; min-height: 46px; width: 100%; }
+.chlog { display: flex; flex-direction: column; gap: 14px; }
+.msg { display: flex; flex-direction: column; gap: 8px; max-width: 92%; }
+.msg.npc { align-self: flex-start; background: var(--accent-soft); border-radius: 16px 16px 16px 4px; padding: 12px 14px; }
+.msg.me { align-self: flex-end; align-items: flex-end; max-width: 100%; }
+.msg.me .mtext { background: var(--ink); color: var(--bg); border-radius: 16px 16px 4px 16px; padding: 10px 14px; max-width: 92%; }
+.mtext { font-size: 1.1rem; line-height: 1.35; overflow-wrap: anywhere; }
+.msg.npc .mtext { font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; }
+.typing { color: var(--muted); }
+.coach { align-self: stretch; border: 1px solid var(--line); border-left: 4px solid var(--sun); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; background: var(--surface); }
+.crow { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; font-size: 0.95rem; }
+.clab { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); flex-basis: 100%; }
+.cbet { font-weight: 700; color: var(--accent); font-size: 1.05rem; }
+.why { color: var(--muted); font-size: 0.9rem; }
+.composer { position: sticky; bottom: 0; margin: 4px -24px -24px; padding: 12px 24px 16px; background: var(--surface); border-top: 1px solid var(--line); border-radius: 0 0 16px 16px; display: flex; flex-direction: column; gap: 10px; }
+.composer textarea { font: inherit; font-size: 1.05rem; color: var(--ink); background: var(--bg); border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 12px; width: 100%; resize: none; }
+@media (max-width: 520px) { .composer { margin-inline: -18px; padding-inline: 18px; margin-bottom: -18px; } }
+
 /* glosses */
 .gl::before { content: " · "; white-space: pre; }
 h1 .gl::before, h2 .gl::before, h3 .gl::before, .stx b .gl::before, .hint .gl::before, .qprompt .gl::before { content: none; }
@@ -1387,9 +1406,10 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
     if (SC.fromPlan) planDone("scene");
   }
   function scenesView() {
+    if (CH.open) return chatView();
     if (SC) return sceneView();
     var c = COUNTRIES[C()];
-    return '<section class="panel"><div class="eyebrow">Escenas · ' + c.name + '</div><h2>Practice the real conversation.</h2>' +
+    return chatPromo() + '<section class="panel"><div class="eyebrow">Escenas · ' + c.name + '</div><h2>Practice the real conversation.</h2>' +
       '<p class="lede">You hear what a local says, answer a quick question about it, then choose what you would say back. Prices and wording are set for ' + c.name + '.</p>' +
       '<div class="decks">' + SCENES.map(function (s) {
         var st = S.scenes[s.id];
@@ -1650,11 +1670,125 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
     return trip + converterPanel(trip ? "Dinero" : eb) + tripNotes();
   }
 
+  /* ----- free conversation with a coach (needs the rumbo-chat Edge Function and a signed-in account) ----- */
+  var CH_TOPICS = [
+    "Taking a taxi from the airport to the hotel", "Ordering dinner at a restaurant", "Going out to a bar with friends", "Checking in at a hotel",
+    "Asking a stranger for directions", "Shopping at a market", "Meeting a local at a party", "Feeling sick and visiting a pharmacy", "Renting a car or scooter", "Booking a tour or excursion"
+  ];
+  var CH = { open: false, started: false, pick: CH_TOPICS[1], custom: "", level: null, scene: "", turns: [], busy: false, err: null, remaining: null, input: "", listening: false, id: 0 };
+  function chLevel() { return CH.level || (S.placement && S.placement.level) || "A1"; }
+  function chMsgs() { return CH.turns.map(function (t) { return { role: t.role === "me" ? "user" : "assistant", content: t.es }; }); }
+  async function chCall(opening) {
+    try {
+      var res = await A.sb.functions.invoke("rumbo-chat", { body: { messages: opening ? [] : chMsgs(), level: chLevel(), country: C(), scene: CH.scene } });
+      if (res.error) {
+        var st = res.error.context && res.error.context.status, b = null;
+        try { b = await res.error.context.json(); } catch (e) {}
+        if (st === 429) return { ok: false, msg: "You have used today's " + ((b && b.limit) || 40) + " practice messages. They reset at midnight Eastern." };
+        if (st === 401) return { ok: false, msg: "Please sign in again to keep chatting." };
+        if (st === 404) return { ok: false, msg: "Conversation mode is not switched on yet. Ask James to finish the setup." };
+        if (st === 502 || st === 500) return { ok: false, msg: "The coach could not answer just now. Your message was not counted. Try again." };
+        return { ok: false, msg: "Could not reach the coach. Check your connection and try again." };
+      }
+      var d = res.data;
+      if (!d || !d.ok || !d.reply_es) return { ok: false, msg: "The coach could not answer just now. Try again." };
+      return { ok: true, d: d };
+    } catch (e) { return { ok: false, msg: "Could not reach the coach. Check your connection and try again." }; }
+  }
+  async function chStart() {
+    var scene = CH.pick === "custom" ? CH.custom.trim() : CH.pick;
+    if (scene.length < 3) return;
+    stopRec();
+    CH.scene = scene; CH.turns = []; CH.err = null; CH.input = ""; CH.started = true; CH.busy = true; CH.level = chLevel(); var id = ++CH.id;
+    render();
+    var r = await chCall(true);
+    if (id !== CH.id) return;
+    CH.busy = false;
+    if (r.ok) { CH.turns.push({ role: "npc", es: r.d.reply_es, en: r.d.reply_en }); CH.remaining = r.d.remaining; say(r.d.reply_es); }
+    else { CH.started = false; CH.err = r.msg; }
+    render();
+  }
+  async function chSend() {
+    var text = CH.input.trim();
+    if (!text || CH.busy || !CH.started) return;
+    stopRec(); CH.listening = false;
+    CH.turns.push({ role: "me", es: text }); CH.input = ""; CH.busy = true; CH.err = null;
+    var id = CH.id, ta = $("ch-msg"); if (ta) ta.value = "";
+    chRefresh(true);
+    var r = await chCall(false);
+    if (id !== CH.id) return;
+    CH.busy = false;
+    if (r.ok) {
+      var me = CH.turns[CH.turns.length - 1];
+      me.coach = { understood: r.d.understood, better: r.d.better, why: r.d.why };
+      CH.turns.push({ role: "npc", es: r.d.reply_es, en: r.d.reply_en }); CH.remaining = r.d.remaining;
+      touchStreak(); save();
+    } else { CH.turns.pop(); CH.input = text; CH.err = r.msg; var ta2 = $("ch-msg"); if (ta2) ta2.value = text; }
+    chRefresh(true);
+  }
+  function chTurnHtml(t, i) {
+    if (t.role === "npc") {
+      return '<div class="msg npc"><div class="mtext">' + esc(t.es) + '</div>' + (t.showEn && t.en ? '<div class="ben">' + esc(t.en) + '</div>' : "") +
+        '<div class="row">' + (canSpeak ? '<button class="btn" data-chsay="' + i + '" data-nogloss>Escuchar</button>' : "") +
+        (t.en ? '<button class="btn quiet" data-chen="' + i + '" data-nogloss>' + (t.showEn ? "Hide translation" : "Translate") + '</button>' : "") + '</div></div>';
+    }
+    var c = t.coach, coach = "";
+    if (c) {
+      coach = '<div class="coach"><div class="crow"><span class="clab">What I understood</span><span>' + esc(c.understood) + '</span></div>' +
+        (c.better
+          ? '<div class="crow"><span class="clab">A more natural way</span><span class="cbet">' + esc(c.better) + '</span>' + (canSpeak ? '<button class="btn quiet inl" data-chsay-b="' + i + '" data-nogloss>Escuchar</button>' : "") + '</div>' + (c.why ? '<div class="why">' + esc(c.why) + '</div>' : "")
+          : '<div class="crow"><span class="clab">Sounded natural</span><span>' + esc(c.why || "Nice work.") + '</span></div>') + '</div>';
+    }
+    return '<div class="msg me"><div class="mtext">' + esc(t.es) + '</div>' + coach + '</div>';
+  }
+  function chLogHtml() {
+    return CH.turns.map(chTurnHtml).join("") +
+      (CH.busy ? '<div class="msg npc"><div class="mtext typing" aria-live="polite">Escribiendo… <span class="s">typing</span></div></div>' : "") +
+      (CH.err ? '<div class="note no">' + esc(CH.err) + '</div>' : "");
+  }
+  function chRefresh(scroll) {
+    var log = $("ch-log"); if (!log) return;
+    log.innerHTML = chLogHtml(); applyGloss(log);
+    var send = $("ch-send"); if (send) send.disabled = CH.busy || !CH.input.trim();
+    var left = $("ch-left"); if (left) left.textContent = CH.remaining === null ? "" : CH.remaining + " messages left today";
+    if (scroll) { var sc = $("scroller"); if (sc) sc.scrollTop = sc.scrollHeight; }
+  }
+  function chatSetupView() {
+    var c = COUNTRIES[C()];
+    var head = '<div class="row between"><button class="btn quiet" data-act="ch-close">All scenes</button></div>';
+    if (!A.sb) return '<section class="panel">' + head + '<h2>Conversación libre</h2><p class="lede">Conversation mode needs accounts, and this copy of the app does not have them switched on.</p></section>';
+    if (!A.user) return '<section class="panel">' + head + '<h2>Conversación libre</h2><p class="lede">Sign in to chat with the coach. It keeps your daily practice limit and stops strangers from using it.</p><div class="row"><button class="btn primary" data-go="account">Sign in or create an account</button></div></section>';
+    var opts = CH_TOPICS.map(function (t) { return '<option value="' + esc(t) + '"' + (CH.pick === t ? " selected" : "") + '>' + esc(t) + '</option>'; }).join("") + '<option value="custom"' + (CH.pick === "custom" ? " selected" : "") + '>Something else…</option>';
+    var lv = chLevel(), ready = CH.pick !== "custom" || CH.custom.trim().length >= 3;
+    return '<section class="panel">' + head + '<div class="eyebrow">Conversación libre · ' + c.name + '</div><h2>Conversación</h2>' +
+      '<p class="lede">Chat back and forth with a local. After each line you say, you see what the coach understood and a more natural way to say it.</p>' +
+      (CH.err ? '<div class="note no">' + esc(CH.err) + '</div>' : "") +
+      '<div class="field"><label for="ch-pick">Topic</label><select id="ch-pick">' + opts + '</select></div>' +
+      (CH.pick === "custom" ? '<div class="field"><label for="ch-custom">Describe the situation</label><input id="ch-custom" type="text" maxlength="120" placeholder="e.g. buying a SIM card" value="' + esc(CH.custom) + '" autocomplete="off"></div>' : "") +
+      '<div class="field"><label>Level</label><div class="row">' + LEVELS.map(function (l) { return '<button class="chip" data-chlevel="' + l + '" aria-pressed="' + (lv === l) + '">' + l + '</button>'; }).join("") + '</div><small>' + LEVEL_PLAIN[lv][0] + '. ' + LEVEL_PLAIN[lv][1] + '</small></div>' +
+      '<div class="row"><button class="btn primary" id="ch-go" data-act="ch-start"' + (ready ? "" : " disabled") + '>Empezar</button></div>' +
+      '<p class="s">Your messages are sent to Claude to generate replies. Conversations are not saved. There is a daily limit of 40 messages.</p></section>';
+  }
+  function chatView() {
+    if (!CH.started) return chatSetupView();
+    var composer = '<div class="composer"><textarea id="ch-msg" rows="2" maxlength="400" placeholder="Escribe o habla… (type or speak)" autocomplete="off" autocapitalize="sentences">' + esc(CH.input) + '</textarea>' +
+      '<div class="row">' + (SR ? '<button class="btn' + (CH.listening ? " mic live" : "") + '" data-act="ch-mic" data-nogloss>' + (CH.listening ? "Escuchando…" : "Hablar") + '</button>' : "") +
+      '<button class="btn primary" id="ch-send" data-act="ch-send" data-nogloss' + (CH.busy || !CH.input.trim() ? " disabled" : "") + '>Enviar</button><span class="s" id="ch-left">' + (CH.remaining === null ? "" : CH.remaining + " messages left today") + '</span></div></div>';
+    return '<section class="panel"><div class="row between"><button class="btn quiet" data-act="ch-close">All scenes</button><button class="btn quiet" data-act="ch-new">New topic</button></div>' +
+      '<div><div class="eyebrow">' + chLevel() + ' · ' + COUNTRIES[C()].name + '</div><h2 data-nogloss>' + esc(CH.scene) + '</h2></div>' +
+      '<div class="chlog" id="ch-log">' + chLogHtml() + '</div>' + composer + '</section>';
+  }
+  function chatPromo() {
+    return '<section class="panel"><div class="eyebrow">Conversación libre · ' + COUNTRIES[C()].name + '</div><h2>Conversación libre</h2>' +
+      '<p class="lede">Pick any setting or invent your own, then chat. You get what the coach understood and a more natural way to say it.</p>' +
+      '<div class="row"><button class="btn primary" data-act="ch-open">' + (CH.started ? "Seguir" : "Empezar") + '</button></div></section>';
+  }
+
   /* ---------- English glosses for the Spanish interface labels ----------
      Every Spanish label in the app gets its English underneath (buttons) or beside it (headings),
      added after each render so the view code stays readable. To gloss a new label, add it here. */
   var GLOSS = {
-    "Hoy": "Today", "Recursos": "Resources", "Info del viaje": "Trip info", "Convertidor de moneda": "Currency converter", "Precios comunes": "Common prices", "Dinero": "Money", "Empezar": "Start", "Otra vez": "Again", "Invita a los muchachos": "Invite the guys", "Los muchachos": "The group",
+    "Hoy": "Today", "Conversación libre": "Free conversation", "Conversación": "Conversation", "Seguir": "Resume", "Enviar": "Send", "Recursos": "Resources", "Info del viaje": "Trip info", "Convertidor de moneda": "Currency converter", "Precios comunes": "Common prices", "Dinero": "Money", "Empezar": "Start", "Otra vez": "Again", "Invita a los muchachos": "Invite the guys", "Los muchachos": "The group",
     "Quiz de 5 preguntas": "5-question quiz", "Casi.": "Almost.", "Correcto.": "Correct.", "Sin problema.": "No worries.", "Muy bien.": "Very good.", "Otra vez.": "Try again.",
     "Salir": "Exit", "Tu nivel": "Your level", "Todas": "All", "Cerrar": "Close", "Anterior": "Previous", "Siguiente": "Next", "Escuchar": "Listen",
     "Escena completa": "Scene complete", "Volver al inicio": "Back to start", "Repetir": "Repeat", "Otra escena": "Another scene", "Escuchas": "You hear",
@@ -1669,7 +1803,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
   var GLOSS_RX = [
     [/^Faltan (\d+) días\.$/, "$1 days to go."], [/^Tu viaje fue hace (\d+) días?\.$/, "Your trip was $1 day(s) ago."], [/^Tu viaje · (.+)$/, "Your trip · $1"],
     [/^Rumbo a (.+)\.$/, "Heading to $1."], [/^(\d+) de (\d+) hechos$/i, "$1 of $2 done"], [/^Pregunta (\d+) de (\d+)$/, "Question $1 of $2"],
-    [/^Turno (\d+) de (\d+)$/, "Turn $1 of $2"], [/^(\d+) de (\d+)$/, "$1 of $2"], [/^Frases · (.+)$/, "Phrases · $1"], [/^Recursos · (.+)$/, "Resources · $1"], [/^Escenas · (.+)$/, "Scenes · $1"], [/^Notas de viaje · (.+)$/, "Travel notes · $1"],
+    [/^Turno (\d+) de (\d+)$/, "Turn $1 of $2"], [/^(\d+) de (\d+)$/, "$1 of $2"], [/^Frases · (.+)$/, "Phrases · $1"], [/^Recursos · (.+)$/, "Resources · $1"], [/^Conversación libre · (.+)$/, "Free conversation · $1"], [/^Escenas · (.+)$/, "Scenes · $1"], [/^Notas de viaje · (.+)$/, "Travel notes · $1"],
     [/^Favoritas \((\d+)\)$/, "Favorites ($1)"], [/^Empiezas en (\w+)\.$/, "You start at $1."], [/^Nivel actual: (\w+)$/, "Current level: $1"],
     [/^(\d+) de (\d+) correctas$/, "$1 of $2 correct"], [/^(\d+) de (\d+) a la primera$/, "$1 of $2 on the first try"],
     [/^¿Qué significa “(.*)”\?$/, "What does “$1” mean?"], [/^ESCENA$/i, "Scene"]
@@ -1718,12 +1852,13 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
     $("app").innerHTML = html;
     applyGloss($("app"));
     if (view === "resources" && !RT.tried) loadRates();
+    if (view === "scenes" && CH.open && CH.started) { applyGloss($("ch-log")); var scl = $("scroller"); if (scl) scl.scrollTop = scl.scrollHeight; }
     if (view === "home" && !onb && S.group && S.group.name) setTimeout(function () { loadGroup(false); }, 0);
   }
 
   /* ---------- Events ---------- */
   document.addEventListener("click", function (ev) {
-    var el = ev.target.closest("[data-go],[data-act],[data-opt],[data-deck],[data-mode],[data-qopt],[data-country],[data-spmode],[data-amode],[data-level],[data-show],[data-fav],[data-scene],[data-sc-ask],[data-sc-you],[data-pbfav],[data-cvdir]");
+    var el = ev.target.closest("[data-go],[data-act],[data-opt],[data-deck],[data-mode],[data-qopt],[data-country],[data-spmode],[data-amode],[data-level],[data-show],[data-fav],[data-scene],[data-sc-ask],[data-sc-you],[data-pbfav],[data-cvdir],[data-chlevel],[data-chsay],[data-chsay-b],[data-chen]");
     if (!el) return;
     var ds = el.dataset;
     if (ds.amode) {
@@ -1748,6 +1883,10 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
       if (ix >= 0) S.favs.splice(ix, 1); else S.favs.push(k);
       var sc = $("scroller"), y = sc ? sc.scrollTop : 0; save(); render(); if (sc) sc.scrollTop = y; return;
     }
+    if (ds.chlevel) { CH.level = ds.chlevel; render(); return; }
+    if (ds.chsay !== undefined) { var t1 = CH.turns[parseInt(ds.chsay, 10)]; if (t1) say(t1.es); return; }
+    if (ds.chsayB !== undefined) { var t2 = CH.turns[parseInt(ds.chsayB, 10)]; if (t2 && t2.coach) say(t2.coach.better); return; }
+    if (ds.chen !== undefined) { var t3 = CH.turns[parseInt(ds.chen, 10)]; if (t3) { t3.showEn = !t3.showEn; chRefresh(false); } return; }
     if (ds.cvdir) { CV.dir = ds.cvdir; render(); var ci = $("cv-amt"); if (ci) ci.focus(); return; }
     if (ds.pbfav !== undefined) { PB.fav = ds.pbfav === "1"; render(); return; }
     if (ds.scene) { startScene(ds.scene, false); toTop(); return; }
@@ -1770,6 +1909,21 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
       gradeP(P.q.i, ok); render(); return;
     }
     switch (ds.act) {
+      case "ch-open": CH.open = true; view = "scenes"; render(); toTop(); break;
+      case "ch-close": stopRec(); CH.listening = false; CH.open = false; render(); toTop(); break;
+      case "ch-new": stopRec(); CH.id++; CH.started = false; CH.turns = []; CH.busy = false; CH.err = null; CH.input = ""; CH.listening = false; render(); toTop(); break;
+      case "ch-start": chStart(); break;
+      case "ch-send": chSend(); break;
+      case "ch-mic":
+        if (CH.listening) { stopRec(); CH.listening = false; render(); break; }
+        CH.listening = true; CH.err = null; render();
+        recognize(function (err, alts) {
+          CH.listening = false;
+          if (err) CH.err = SP_ERR[err] || "Speech recognition stopped.";
+          else { CH.input = alts[0] || ""; CH.err = null; }
+          render();
+        });
+        break;
       case "ob-pick": OB.pick = true; render(); break;
       case "ob-back": OB.pick = false; render(); break;
       case "ob-country": S.country = null; save(); render(); break;
@@ -1868,13 +2022,22 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
   });
 
   document.addEventListener("input", function (ev) {
+    if (ev.target && ev.target.id === "ch-msg") { CH.input = ev.target.value; var sb = $("ch-send"); if (sb) sb.disabled = CH.busy || !CH.input.trim(); return; }
+    if (ev.target && ev.target.id === "ch-custom") { CH.custom = ev.target.value; var gb = $("ch-go"); if (gb) gb.disabled = CH.custom.trim().length < 3; return; }
     if (ev.target && ev.target.id === "cv-amt") { CV.amt = ev.target.value; var out = $("cv-out"); if (out) out.innerHTML = cvOut(); return; }
     if (ev.target && ev.target.id === "pb-search") {
       PB.q = ev.target.value;
       var box = $("pb-list"); if (box) box.innerHTML = pbBody();
     }
   });
+  document.addEventListener("change", function (ev) {
+    if (ev.target && ev.target.id === "ch-pick") { CH.pick = ev.target.value; render(); var ci = $("ch-custom"); if (CH.pick === "custom" && ci) ci.focus(); }
+  });
+  /* keep the keyboard open when tapping Send */
+  document.addEventListener("mousedown", function (ev) { if (ev.target.closest && ev.target.closest("#ch-send")) ev.preventDefault(); });
+  document.addEventListener("touchstart", function (ev) { if (ev.target.closest && ev.target.closest("#ch-send")) ev.preventDefault(); }, { passive: false });
   document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Enter" && !ev.shiftKey && ev.target && ev.target.id === "ch-msg") { ev.preventDefault(); chSend(); return; }
     if (ev.key === "Escape" && SHOW) { SHOW = null; renderShow(); }
   });
 

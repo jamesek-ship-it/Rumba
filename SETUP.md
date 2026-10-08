@@ -45,3 +45,20 @@ exactly as before and keeps progress on the device only (the "Entrar" button sta
   open endpoint, needs no key, and refuses to save a rate that looks wrong. To refresh by hand, open the
   repo's **Actions** tab, pick **Update exchange rates**, and click **Run workflow**.
 - Ecuador uses US dollars, so its Recursos tab says there is nothing to convert.
+
+## Conversation mode (free chat with a coach)
+
+Needs accounts (above), an Anthropic API key, and one Supabase Edge Function.
+
+1. **API key.** At console.anthropic.com, add a few dollars of credit under Billing, set a monthly spend
+   limit, and create an API key. (This is separate from a Claude subscription.)
+2. **Database.** In the Supabase SQL editor, run the "Conversation coach: daily message cap" block at the
+   bottom of `supabase/schema.sql`. (Running the whole file again is also safe for that part only if you
+   skip the earlier `create policy` lines, so the block alone is easier.)
+3. **Function.** Supabase > Edge Functions > Deploy a new function > Via Editor. Name it exactly
+   `rumbo-chat`, paste in `supabase/functions/rumbo-chat/index.ts`, and deploy.
+4. **Secret.** Supabase > Edge Functions > Secrets, add `ANTHROPIC_API_KEY` with your key.
+   Optional: `CHAT_MODEL` to change the model (default `claude-haiku-4-5-20251001`).
+
+The function checks that the caller is signed in, allows 40 messages per person per day (Eastern time,
+change `DAILY_LIMIT` in the function to adjust), and keeps no transcripts.
