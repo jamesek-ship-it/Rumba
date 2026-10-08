@@ -100,7 +100,7 @@ h3 { font-size: 1.1rem; }
 .rung.done { background: var(--accent-soft); border-color: transparent; }
 .rung.here { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .rung.here span { color: var(--accent-ink); opacity: 0.85; }
-.rung.here::after { content: "Tú estás aquí"; position: absolute; top: -9px; right: 8px; background: var(--sun); color: #1b1608; font-size: 0.65rem; font-weight: 700; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+.rung.here::after { content: "You are here"; position: absolute; top: -9px; right: 8px; background: var(--sun); color: #1b1608; font-size: 0.65rem; font-weight: 700; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
 
 /* test */
 .meter { display: flex; gap: 4px; }
@@ -198,6 +198,18 @@ body { margin: 0; -webkit-text-size-adjust: 100%; padding-top: max(0px, env(safe
 .trip .chip small { margin-left: 4px; }
 @media (max-width: 360px) { .trip .chip small { display: none; } .brand { font-size: 1.25rem; } }
 
+/* glosses */
+.gl::before { content: " · "; white-space: pre; }
+h1 .gl::before, h2 .gl::before, h3 .gl::before, .stx b .gl::before, .hint .gl::before, .qprompt .gl::before { content: none; }
+.gl { opacity: 0.6; font-weight: 500; font-family: var(--font-body); text-transform: none; letter-spacing: 0; }
+h1 .gl, h2 .gl, h3 .gl, .stx b .gl, .hint .gl, .qprompt .gl { display: block; line-height: 1.25; margin-top: 3px; }
+h1 .gl { font-size: 0.4em; } h2 .gl { font-size: 0.6em; } h3 .gl { font-size: 0.8em; }
+.stx b .gl, .qprompt .gl { font-size: 0.8rem; } .hint .gl { font-size: 0.7rem; }
+.btn.two, .show-btn.two, .seg button.two { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.15; padding-block: 6px; }
+.show-btn.two { display: flex; }
+.two .nes { font-weight: 600; }
+.btn.two .nen, .show-btn.two .nen, .seg button.two .nen { font-size: 0.68rem; font-weight: 500; opacity: 0.7; }
+
 /* v3: bottom nav, welcome, phrasebook, show-it, scenes, plan */
 body { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
 body.onb { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
@@ -286,7 +298,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
 (function () {
   "use strict";
   var LEVELS = ["A1", "A2", "B1", "B2"];
-  var LEVEL_NAMES = { A1: "Principiante", A2: "Elemental", B1: "Intermedio", B2: "Intermedio alto" };
+  var LEVEL_NAMES = { A1: "Beginner", A2: "Elementary", B1: "Intermediate", B2: "Upper intermediate" };
   var LEVEL_EN = { A1: "Beginner", A2: "Elementary", B1: "Intermediate", B2: "Upper intermediate" };
 
   /* ---------- Placement questions: five per level ---------- */
@@ -1110,7 +1122,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
       return '<section class="welcome"><h1>Choose your level</h1><p class="lede">Pick the one that sounds most like you. You can change it any time.</p>' + levelButtons() +
         '<button class="btn quiet" data-act="ob-back">Back</button></section>';
     }
-    return '<section class="welcome"><h1>¿Cómo está tu español?</h1><p class="lede">How is your Spanish? This sets where you start.</p>' +
+    return '<section class="welcome"><h1 data-nogloss>¿Cómo está tu español?</h1><p class="lede">How is your Spanish? This sets where you start.</p>' +
       '<div class="bigs"><button class="big" data-act="ob-pick"><b>Choose my level</b><span>I know where I am</span></button>' +
       '<button class="big" data-act="ob-quiz"><b>Take a 5-question quiz</b><span>About a minute</span></button></div>' +
       '<button class="btn quiet" data-act="ob-country">Change destination</button></section>';
@@ -1170,7 +1182,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
     var rows = A.group && A.group.rows ? A.group.rows.slice().sort(function (a, b) { return (b.learned - a.learned) || (b.streak - a.streak); }) : null;
     var list = rows ? (rows.length ? '<ul class="list">' + rows.map(function (r) {
       var me = A.user && r.user_id === A.user.id;
-      return '<li><span><b>' + esc(r.display_name) + '</b>' + (me ? ' <span class="tag">tú</span>' : "") + '</span><span class="mono">' + r.learned + ' phrases · ' + r.week_days + '/7 days</span></li>';
+      return '<li><span><b>' + esc(r.display_name) + '</b>' + (me ? ' <span class="tag">you</span>' : "") + '</span><span class="mono">' + r.learned + ' phrases · ' + r.week_days + '/7 days</span></li>';
     }).join("") + '</ul>' : '<p class="lede">Nobody has joined yet.</p>') : '<p class="lede">' + (A.group && A.group.err ? "Could not load the group right now." : "Loading the group…") + '</p>';
     return (A.gmsg ? '<div class="note no">' + esc(A.gmsg) + '</div>' : "") + '<h3>Los muchachos</h3>' + list + '<div class="row"><button class="btn" data-act="group-refresh">Refresh</button><button class="btn quiet" data-act="group-leave">Leave the group</button></div>';
   }
@@ -1212,7 +1224,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
     var mine = S.placement && S.placement.level === d.lv;
     var tag = d.kind === "phrase" ? "TRIP" : d.lv;
     return '<button class="deck' + (mine ? " mine" : "") + '" data-deck="' + d.id + '">' +
-      '<span class="tag' + (mine ? " sun" : "") + '">' + tag + (d.country ? " · " + COUNTRIES[d.country].code : "") + (mine ? " · tu nivel" : "") + '</span>' +
+      '<span class="tag' + (mine ? " sun" : "") + '">' + tag + (d.country ? " · " + COUNTRIES[d.country].code : "") + (mine ? " · your level" : "") + '</span>' +
       '<span class="t">' + d.title + '</span><span class="s">' + d.sub + '</span>' +
       '<span class="bar-m" aria-hidden="true"><i style="width:' + Math.round(m / n * 100) + '%"></i></span>' +
       '<span class="s mono">' + m + '/' + n + ' learned · ' + due + ' due</span></button>';
@@ -1315,6 +1327,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
       '<div class="show-bar"><button class="show-btn" data-act="show-prev"' + (SHOW.pos === 0 ? " disabled" : "") + '>Anterior</button>' +
       (canSpeak ? '<button class="show-btn solid" data-act="show-say">Escuchar</button>' : "") +
       '<button class="show-btn" data-act="show-next"' + (SHOW.pos >= n - 1 ? " disabled" : "") + '>Siguiente</button></div>';
+    applyGloss(el);
     el.hidden = false; document.body.classList.add("noscroll");
     var cb = $("show-close"); if (cb) cb.focus();
   }
@@ -1526,6 +1539,55 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
       '<div class="row"><button class="btn" data-go="level">Change my level</button><button class="btn" data-act="start-test">Take the 5-question quiz</button></div></section>';
   }
 
+
+  /* ---------- English glosses for the Spanish interface labels ----------
+     Every Spanish label in the app gets its English underneath (buttons) or beside it (headings),
+     added after each render so the view code stays readable. To gloss a new label, add it here. */
+  var GLOSS = {
+    "Hoy": "Today", "Empezar": "Start", "Otra vez": "Again", "Invita a los muchachos": "Invite the guys", "Los muchachos": "The group",
+    "Quiz de 5 preguntas": "5-question quiz", "Casi.": "Almost.", "Correcto.": "Correct.", "Sin problema.": "No worries.", "Muy bien.": "Very good.", "Otra vez.": "Try again.",
+    "Salir": "Exit", "Tu nivel": "Your level", "Todas": "All", "Cerrar": "Close", "Anterior": "Previous", "Siguiente": "Next", "Escuchar": "Listen",
+    "Escena completa": "Scene complete", "Volver al inicio": "Back to start", "Repetir": "Repeat", "Otra escena": "Another scene", "Escuchas": "You hear",
+    "¿Qué dijo?": "What did they say?", "Tu turno": "Your turn", "Dilo en voz alta": "Say it out loud", "Escuchando…": "Listening…",
+    "Continuar": "Continue", "Terminar": "Finish", "Modo oído: ocultar texto": "Listening mode: hide text", "Elige un mazo": "Choose a deck", "Estudiar": "Study",
+    "Hablar": "Speak", "Hablar otra vez": "Speak again", "Sesión completa": "Session complete", "Toca para ver la respuesta": "Tap to see the answer", "La sé": "I know it",
+    "Progreso": "Progress", "Dominio por mazo": "Mastery by deck", "Todavía sin nivel": "No level yet", "Frases del día": "Today's phrases", "Fin": "End",
+    "Hoy es el día.": "Today's the day.", "Mañana viajas.": "You travel tomorrow.", "Cuenta": "Account", "Entrar": "Sign in", "Crear cuenta": "Create account",
+    "Sesión iniciada": "Signed in", "Crea tu cuenta": "Create your account", "Entra a tu cuenta": "Sign in to your account", "Restablecer contraseña": "Reset password",
+    "Nueva contraseña": "New password", "Zona de peligro": "Danger zone"
+  };
+  var GLOSS_RX = [
+    [/^Faltan (\d+) días\.$/, "$1 days to go."], [/^Tu viaje fue hace (\d+) días?\.$/, "Your trip was $1 day(s) ago."], [/^Tu viaje · (.+)$/, "Your trip · $1"],
+    [/^Rumbo a (.+)\.$/, "Heading to $1."], [/^(\d+) de (\d+) hechos$/i, "$1 of $2 done"], [/^Pregunta (\d+) de (\d+)$/, "Question $1 of $2"],
+    [/^Turno (\d+) de (\d+)$/, "Turn $1 of $2"], [/^(\d+) de (\d+)$/, "$1 of $2"], [/^Frases · (.+)$/, "Phrases · $1"], [/^Escenas · (.+)$/, "Scenes · $1"], [/^Notas de viaje · (.+)$/, "Travel notes · $1"],
+    [/^Favoritas \((\d+)\)$/, "Favorites ($1)"], [/^Empiezas en (\w+)\.$/, "You start at $1."], [/^Nivel actual: (\w+)$/, "Current level: $1"],
+    [/^(\d+) de (\d+) correctas$/, "$1 of $2 correct"], [/^(\d+) de (\d+) a la primera$/, "$1 of $2 on the first try"],
+    [/^¿Qué significa “(.*)”\?$/, "What does “$1” mean?"], [/^ESCENA$/i, "Scene"]
+  ];
+  function glossOf(t) {
+    t = t.replace(/\s+/g, " ").trim();
+    if (!t) return null;
+    if (Object.prototype.hasOwnProperty.call(GLOSS, t)) return GLOSS[t];
+    for (var i = 0; i < GLOSS_RX.length; i++) if (GLOSS_RX[i][0].test(t)) return t.replace(GLOSS_RX[i][0], GLOSS_RX[i][1]);
+    return null;
+  }
+  function applyGloss(root) {
+    if (!root) return;
+    var els = root.querySelectorAll("button, .eyebrow, h1, h2, h3, .stx b, .note b, .hint, .qprompt, .tag");
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (el.children.length || el.hasAttribute("data-nogloss") || el.closest("[data-nogloss]")) continue;
+      var txt = el.textContent, en = glossOf(txt);
+      if (!en) continue;
+      if (el.tagName === "BUTTON") {
+        el.classList.add("two");
+        el.innerHTML = '<span class="nes">' + esc(txt.trim()) + '</span><span class="nen">' + esc(en) + '</span>';
+      } else {
+        el.insertAdjacentHTML("beforeend", '<span class="gl">' + esc(en) + '</span>');
+      }
+    }
+  }
+
   function render() {
     var onb = needsOnb();
     if (onb && view !== "test" && view !== "account") view = "home";
@@ -1543,6 +1605,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
     else html = progressView();
     if (onb && view === "account") html = '<div><button class="btn quiet" data-go="home">Back</button></div>' + html;
     $("app").innerHTML = html;
+    applyGloss($("app"));
     if (view === "home" && !onb && S.group && S.group.name) setTimeout(function () { loadGroup(false); }, 0);
   }
 
