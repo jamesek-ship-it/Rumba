@@ -1,0 +1,1718 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rumbo Español</title>
+<meta name="description" content="Conversational Spanish for travel in Mexico, Ecuador and Colombia, with a phrasebook, short conversations and speaking practice.">
+<meta name="theme-color" content="#F1F4F9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D1425" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Rumbo">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root { color-scheme: light; }
+
+/* Layout: one centered column, top tab bar, a four-step level ladder (A1 to B2) as the signature element. */
+:root {
+  --bg: #F1F4F9;
+  --surface: #FFFFFF;
+  --ink: #12203A;
+  --muted: #55627D;
+  --line: #D6DCE8;
+  --accent: #2748D4;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #E2E8FB;
+  --sun: #F2B33D;
+  --sun-soft: #FCEFCF;
+  --good: #187A4D;
+  --good-soft: #DDF3E7;
+  --bad: #BE3027;
+  --bad-soft: #FADFDC;
+  --font-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D1425; --surface: #151D33; --ink: #E7ECF7; --muted: #9AA6C2; --line: #29334F;
+    --accent: #8AA2FF; --accent-ink: #0D1425; --accent-soft: #212D57; --sun: #F4C35C; --sun-soft: #3A3018;
+    --good: #55CC90; --good-soft: #15332A; --bad: #FF8178; --bad-soft: #43201F; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D1425; --surface: #151D33; --ink: #E7ECF7; --muted: #9AA6C2; --line: #29334F;
+  --accent: #8AA2FF; --accent-ink: #0D1425; --accent-soft: #212D57; --sun: #F4C35C; --sun-soft: #3A3018;
+  --good: #55CC90; --good-soft: #15332A; --bad: #FF8178; --bad-soft: #43201F; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; padding-inline: 16px; padding-block: 0 48px; }
+.wrap { max-width: 760px; margin-inline: auto; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.1; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+p { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+/* top bar */
+.bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding-block: 20px 12px; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 1.45rem; letter-spacing: -0.02em; display: flex; align-items: baseline; gap: 6px; }
+.brand i { font-style: normal; color: var(--accent); }
+.tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px; }
+.tab { border: 0; background: transparent; padding: 7px 16px; border-radius: 999px; font-weight: 600; font-size: 0.9rem; color: var(--muted); }
+.tab[aria-current="page"] { background: var(--ink); color: var(--bg); }
+.tab:not([aria-current="page"]):hover { color: var(--ink); }
+
+.trip { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding-block: 4px; }
+.trip .lbl { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+.chip { border: 1.5px solid var(--line); background: var(--surface); border-radius: 999px; padding: 7px 16px; font-weight: 600; font-size: 0.9rem; min-height: 40px; }
+.chip:hover { border-color: var(--accent); }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.chip small { font-family: var(--font-mono); font-weight: 600; font-size: 0.7rem; opacity: 0.75; margin-left: 6px; }
+main { display: flex; flex-direction: column; gap: 20px; padding-top: 12px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.lede { color: var(--muted); max-width: 60ch; }
+h1 { font-size: clamp(2rem, 6vw, 2.9rem); }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.1rem; }
+
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 11px 18px; font-weight: 600; min-height: 44px; }
+.btn:hover { border-color: var(--ink); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.quiet { border-color: transparent; background: transparent; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+.btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+/* level ladder */
+.ladder { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.rung { border-radius: 10px; padding: 10px 12px 12px; background: var(--bg); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 2px; min-width: 0; position: relative; }
+.rung b { font-family: var(--font-mono); font-size: 1.05rem; }
+.rung span { font-size: 0.75rem; color: var(--muted); line-height: 1.25; }
+.rung.done { background: var(--accent-soft); border-color: transparent; }
+.rung.here { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.rung.here span { color: var(--accent-ink); opacity: 0.85; }
+.rung.here::after { content: "Tú estás aquí"; position: absolute; top: -9px; right: 8px; background: var(--sun); color: #1b1608; font-size: 0.65rem; font-weight: 700; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+
+/* test */
+.meter { display: flex; gap: 4px; }
+.meter i { flex: 1; height: 6px; border-radius: 3px; background: var(--line); }
+.meter i.on { background: var(--accent); }
+.meter i.ok { background: var(--good); }
+.meter i.no { background: var(--bad); }
+.qprompt { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.3rem, 4vw, 1.7rem); line-height: 1.2; text-wrap: balance; }
+.opts { display: grid; gap: 10px; }
+.opt { display: flex; gap: 12px; align-items: center; text-align: left; border: 1.5px solid var(--line); background: var(--surface); border-radius: 12px; padding: 12px 14px; min-height: 52px; }
+.opt .k { font-family: var(--font-mono); font-size: 0.8rem; width: 26px; height: 26px; flex: none; display: grid; place-items: center; border-radius: 7px; background: var(--bg); color: var(--muted); }
+.opt:hover:not([disabled]) { border-color: var(--accent); }
+.opt.right { border-color: var(--good); background: var(--good-soft); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt[disabled] { cursor: default; }
+.note { border-radius: 12px; padding: 12px 14px; font-size: 0.95rem; }
+.note.ok { background: var(--good-soft); }
+.note.no { background: var(--bad-soft); }
+.note.info { background: var(--sun-soft); }
+
+/* decks */
+.group { display: flex; flex-direction: column; gap: 10px; }
+.decks { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+.deck { text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.deck:hover { border-color: var(--accent); }
+.deck.mine { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.deck .t { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; }
+.deck .s { font-size: 0.85rem; color: var(--muted); }
+.bar-m { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.bar-m i { display: block; height: 100%; background: var(--good); }
+.tag { font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--ink); align-self: flex-start; }
+.tag.sun { background: var(--sun); color: #1b1608; }
+
+/* flashcard */
+.card { border: 1.5px solid var(--line); border-radius: 18px; min-height: 240px; padding: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; background: var(--bg); width: 100%; }
+.card:hover { border-color: var(--accent); }
+.card .es { font-family: var(--font-display); font-weight: 800; font-size: clamp(2rem, 8vw, 3rem); line-height: 1.05; overflow-wrap: anywhere; }
+.card .en { font-size: 1.25rem; font-weight: 600; color: var(--accent); }
+.card .ex { color: var(--muted); font-style: italic; max-width: 40ch; }
+.card .hint { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; align-self: flex-start; }
+.seg button { border: 0; background: transparent; padding: 8px 16px; font-weight: 600; font-size: 0.9rem; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+/* progress */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+.stat { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.stat b { font-family: var(--font-display); font-size: 1.9rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 0.8rem; color: var(--muted); }
+.list { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.list li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 0.95rem; }
+.list li:first-child { border-top: 0; }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.scores { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.scores div { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column; }
+.scores b { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); }
+.scores span { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+@media (max-width: 520px) {
+  .panel { padding: 18px; }
+  .rung span { display: none; }
+  .tab { padding: 7px 12px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .card, .opt, .deck, .btn { transition: border-color .15s, background-color .15s, filter .15s; }
+}
+
+/* account */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-weight: 600; font-size: 0.9rem; }
+.field input { font: inherit; color: var(--ink); background: var(--bg); border: 1.5px solid var(--line); border-radius: 10px; padding: 11px 12px; min-height: 46px; width: 100%; }
+.field input:focus-visible { border-color: var(--accent); outline-offset: 0; }
+.field small { color: var(--muted); }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); display: inline-block; margin-right: 7px; }
+.dot.ok { background: var(--good); } .dot.pending, .dot.syncing { background: var(--sun); } .dot.error { background: var(--bad); }
+.btn.danger { border-color: var(--bad); color: var(--bad); }
+.btn.danger.solid { background: var(--bad); color: #fff; }
+form { display: flex; flex-direction: column; gap: 14px; margin: 0; }
+/* standalone page base */
+html { background: var(--bg); }
+body { margin: 0; -webkit-text-size-adjust: 100%; padding-top: max(0px, env(safe-area-inset-top)); padding-bottom: calc(48px + env(safe-area-inset-bottom)); }
+.mic { min-width: 150px; }
+.mic.live { background: var(--bad); border-color: var(--bad); color: #fff; }
+@media (prefers-reduced-motion: no-preference) { .mic.live { animation: pulse 1.2s ease-in-out infinite; } }
+@keyframes pulse { 50% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--bad) 25%, transparent); } }
+
+/* v3: bottom nav, welcome, phrasebook, show-it, scenes, plan */
+body { padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
+body.onb { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
+.nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; justify-content: center; gap: 2px; background: var(--surface); border-top: 1px solid var(--line); padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); }
+.nav button { flex: 1; max-width: 120px; border: 0; background: transparent; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; font-size: 0.72rem; font-weight: 600; color: var(--muted); min-height: 54px; border-radius: 10px; }
+.nav svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.nav button[aria-current="page"] { color: var(--accent); background: var(--accent-soft); }
+body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
+.noscroll { overflow: hidden; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.row.between { justify-content: space-between; }
+.inl { padding: 0 4px; min-height: 0; display: inline; }
+.s { font-size: 0.85rem; color: var(--muted); }
+.ex { color: var(--muted); font-style: italic; }
+.field input[type=search] { -webkit-appearance: none; appearance: none; }
+
+.welcome { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 18px; max-width: 460px; width: 100%; margin-inline: auto; padding-block: 7vh 8px; }
+.welcome .lede { margin-inline: auto; }
+.mark { width: 76px; height: 76px; border-radius: 20px; background: #2748D4; color: #fff; display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; font-size: 3rem; box-shadow: inset 0 -8px 0 #F2B33D; }
+.bigs { display: grid; gap: 10px; width: 100%; text-align: left; }
+.big { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; border: 1.5px solid var(--line); background: var(--surface); border-radius: 14px; padding: 16px 18px; min-height: 68px; }
+.big:hover { border-color: var(--accent); }
+.big b { font-family: var(--font-display); font-size: 1.2rem; }
+.big span { color: var(--muted); font-size: 0.9rem; }
+.big .tag { margin-bottom: 4px; color: var(--ink); }
+
+.levelrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.plan { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.step { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }
+.step:first-child { border-top: 0; }
+.chk { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--line); flex: none; display: grid; place-items: center; }
+.step.done .chk { background: var(--good); border-color: var(--good); }
+.step.done .chk::after { content: "✓"; color: #fff; font-weight: 700; font-size: 0.85rem; }
+.stx { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.stx span { color: var(--muted); font-size: 0.85rem; }
+
+.pcat { margin-top: 14px; font-size: 0.95rem; color: var(--muted); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; }
+.prow { display: flex; align-items: stretch; border-top: 1px solid var(--line); }
+.pshow { flex: 1; min-width: 0; text-align: left; background: transparent; border: 0; padding: 12px 0; display: flex; flex-direction: column; gap: 2px; }
+.pes { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; line-height: 1.2; }
+.pen { color: var(--muted); font-size: 0.9rem; }
+.star { width: 52px; border: 0; background: transparent; display: grid; place-items: center; }
+.star svg { width: 24px; height: 24px; fill: none; stroke: var(--muted); stroke-width: 1.8; stroke-linejoin: round; }
+.star[aria-pressed="true"] svg { fill: var(--sun); stroke: var(--sun); }
+.blank { display: inline-block; width: 2.2em; border-bottom: 2px solid currentColor; margin-inline: 3px; }
+
+.show { position: fixed; inset: 0; z-index: 50; background: #2748D4; color: #fff; display: flex; flex-direction: column; padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
+.show[hidden] { display: none; }
+.show-top { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; }
+.show-body { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 16px 22px; gap: 22px; overflow: auto; }
+.show-es { font-family: var(--font-display); font-weight: 800; font-size: clamp(2.2rem, 11vw, 4.6rem); line-height: 1.05; overflow-wrap: anywhere; text-wrap: balance; }
+.show-en { font-size: 1.2rem; opacity: 0.85; }
+.show .blank { border-color: #F2B33D; }
+.show-bar { display: flex; gap: 10px; padding: 14px 16px 18px; }
+.show-btn { flex: 1; border: 2px solid rgba(255,255,255,.55); background: transparent; color: #fff; border-radius: 12px; padding: 12px 16px; min-height: 52px; font-weight: 700; }
+.show-top .show-btn { flex: none; min-height: 44px; padding: 8px 16px; }
+.show-btn.solid { background: #fff; color: #2748D4; border-color: #fff; }
+.show-btn[disabled] { opacity: 0.4; }
+.show :focus-visible { outline-color: #fff; }
+
+.bubble { border-radius: 16px; padding: 16px; background: var(--accent-soft); display: flex; flex-direction: column; gap: 10px; }
+.btext { font-family: var(--font-display); font-weight: 700; font-size: 1.4rem; line-height: 1.2; }
+.btext.hid { color: var(--muted); letter-spacing: 0.3em; }
+.ben { color: var(--muted); font-style: italic; }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="bar">
+    <div class="brand">Rumbo<i>Español</i></div>
+  </header>
+  <div class="trip" id="trip" role="group" aria-label="Destino"></div>
+  <main id="app"></main>
+</div>
+<nav class="nav" id="nav" aria-label="Secciones"></nav>
+<div class="show" id="show" hidden role="dialog" aria-modal="true" aria-label="Frase"></div>
+<script src="vendor/supabase.js"></script>
+<script>
+(function () {
+  "use strict";
+  var LEVELS = ["A1", "A2", "B1", "B2"];
+  var LEVEL_NAMES = { A1: "Principiante", A2: "Elemental", B1: "Intermedio", B2: "Intermedio alto" };
+  var LEVEL_EN = { A1: "Beginner", A2: "Elementary", B1: "Intermediate", B2: "Upper intermediate" };
+
+  /* ---------- Placement questions: five per level ---------- */
+  var BANK = {
+    A1: [
+      { q: "How do you say “good morning”?", o: ["Buenas noches", "Buenos días", "Hasta luego", "Gracias"], a: 1, why: "“Buenos días” is used until about midday. “Buenas noches” is for the evening and night." },
+      { q: "Yo ___ de Michigan.", o: ["soy", "eres", "es", "son"], a: 0, why: "“Soy” is the “yo” form of ser: Yo soy de Michigan." },
+      { q: "What does “la casa” mean?", o: ["the car", "the house", "the dog", "the table"], a: 1, why: "La casa = the house. Casa is feminine, so it takes “la”." },
+      { q: "Which word means “seven”?", o: ["seis", "siete", "ocho", "nueve"], a: 1, why: "Seis 6, siete 7, ocho 8, nueve 9." },
+      { q: "Ella ___ agua.", o: ["bebo", "bebes", "bebe", "beben"], a: 2, why: "“Ella” takes the third-person singular: ella bebe." }
+    ],
+    A2: [
+      { q: "Ayer yo ___ al supermercado.", o: ["voy", "fui", "iré", "voy a ir"], a: 1, why: "“Ayer” (yesterday) calls for the past. Fui is the preterite of ir: yo fui." },
+      { q: "Me gusta ___ en el parque.", o: ["caminar", "camino", "caminas", "caminó"], a: 0, why: "After “me gusta” you use the infinitive: me gusta caminar." },
+      { q: "What does “¿Cuánto cuesta?” mean?", o: ["Where is it?", "What time is it?", "How much does it cost?", "How long does it take?"], a: 2, why: "Cuánto cuesta = how much does it cost." },
+      { q: "Mi hermana es ___ que yo.", o: ["alta más", "tan alta", "más alta", "muy alta"], a: 2, why: "Comparisons use “más + adjective + que”: más alta que yo." },
+      { q: "Read: “Hoy hace frío y llueve. Voy a llevar un paraguas.” What will the speaker take?", o: ["a hat", "an umbrella", "sunscreen", "sandals"], a: 1, why: "Un paraguas is an umbrella, and it is raining (llueve)." }
+    ],
+    B1: [
+      { q: "Si tuviera tiempo, ___ a visitarte.", o: ["iré", "iría", "iba", "voy"], a: 1, why: "“Si + imperfect subjunctive” pairs with the conditional: si tuviera tiempo, iría." },
+      { q: "Hace dos años que ___ en Detroit.", o: ["vivo", "viví", "viviré", "había vivido"], a: 0, why: "“Hace + time + que” with a present verb says the situation continues: hace dos años que vivo aquí." },
+      { q: "No creo que ___ tiempo hoy.", o: ["tiene", "tenga", "tendrá", "tuvo"], a: 1, why: "“No creo que” expresses doubt and triggers the subjunctive: tenga." },
+      { q: "Cuando llegué, ya ___ la cena.", o: ["han cenado", "cenaron", "habían cenado", "habrán cenado"], a: 2, why: "The past perfect (habían cenado) shows an action finished before another past action." },
+      { q: "“Estoy harto de esperar” means…", o: ["I'm hungry from waiting", "I'm fed up with waiting", "I'm late from waiting", "I'm happy to wait"], a: 1, why: "Estar harto de = to be fed up with. It is not related to hunger." }
+    ],
+    B2: [
+      { q: "Me habría gustado que me ___ antes.", o: ["avisas", "avisarás", "avisaste", "hubieras avisado"], a: 3, why: "After “habría gustado que” you need the pluperfect subjunctive: hubieras avisado." },
+      { q: "No me parece que esa solución ___ viable.", o: ["es", "sea", "será", "fue"], a: 1, why: "Negated opinion verbs (no me parece que) take the subjunctive: sea." },
+      { q: "“Estar en las nubes” means…", o: ["to be traveling", "to be very rich", "to be daydreaming", "to be angry"], a: 2, why: "Estar en las nubes = to have your head in the clouds." },
+      { q: "Es imprescindible que todos ___ a tiempo.", o: ["llegan", "lleguen", "llegarán", "llegaron"], a: 1, why: "Expressions of necessity (es imprescindible que) require the subjunctive: lleguen." },
+      { q: "Por mucho que lo ___, no cambiará de opinión.", o: ["intentas", "intentaste", "intentes", "intentarás"], a: 2, why: "“Por mucho que” + subjunctive means “no matter how much”: por mucho que lo intentes." }
+    ]
+  };
+
+  /* ---------- Destinations ---------- */
+  var COUNTRIES = {
+    mx: { name: "México", code: "MX", lang: "es-MX", currency: "Mexican peso (MXN)", emergency: "911", notes: [
+      "Usted is the safe choice with older people, in shops and in hotels. Tú is fine with people your age.",
+      "Diminutives soften requests and add warmth: un cafecito, un momentito, ahorita.",
+      "Say “¿Mande?” when you did not catch something. It is the polite Mexican way to say “pardon?”." ] },
+    ec: { name: "Ecuador", code: "EC", lang: "es-EC", currency: "US dollar (USD)", emergency: "911", notes: [
+      "Ecuador uses the US dollar, so prices and change work just like at home.",
+      "Speech in the Andes (Quito) tends to be slower and very polite. The coast (Guayaquil) is faster and more relaxed.",
+      "Words from Kichwa show up in daily talk: guagua, ñaño, achachay." ] },
+    co: { name: "Colombia", code: "CO", lang: "es-CO", currency: "Colombian peso (COP)", emergency: "123", notes: [
+      "Usted is common in Colombia, even among friends in some regions. It sounds warm, not cold.",
+      "In Medellín and Cali you will hear “vos” instead of “tú”. You only need to understand it. Tú and usted are always safe.",
+      "“Con gusto”, “a la orden” and “qué pena” keep everyday exchanges polite and friendly." ] }
+  };
+
+  /* ---------- Study decks ----------
+     A card is [spanish, english, example]. Spanish and example may be an object keyed by country (mx, ec, co)
+     when locals say it differently. Decks with `country` only show for that destination. */
+  var DECKS = [
+    { id: "a1-numbers", lv: "A1", regional: true, title: "Números y precios", sub: "Understand what things cost", cards: [
+      ["uno, dos, tres", "one, two, three", "Tres cervezas, por favor."],
+      ["diez", "ten", "Son diez minutos."],
+      ["veinte", "twenty", "Tengo veinte años de experiencia."],
+      ["cincuenta", "fifty", "Cincuenta, más o menos."],
+      ["cien", "one hundred", "Cuesta cien."],
+      ["mil", "one thousand", "Mil gracias."],
+      [{ mx: "ciento cincuenta pesos", ec: "cuatro dólares", co: "quince mil pesos" }, { mx: "150 pesos", ec: "4 dollars", co: "15,000 pesos" },
+        { mx: "El taxi cuesta ciento cincuenta pesos.", ec: "El taxi cuesta cuatro dólares.", co: "El taxi cuesta quince mil pesos." }],
+      [{ mx: "trescientos sesenta pesos", ec: "dieciocho dólares", co: "sesenta mil pesos" }, { mx: "360 pesos", ec: "18 dollars", co: "60,000 pesos" },
+        { mx: "La cuenta son trescientos sesenta pesos.", ec: "La cuenta son dieciocho dólares.", co: "La cuenta son sesenta mil pesos." }] ] },
+    { id: "a1-time", lv: "A1", title: "Días y tiempo", sub: "Today, tomorrow and what time", cards: [
+      ["hoy", "today", "Hoy llegamos al hotel."], ["mañana", "tomorrow / morning", "Mañana vamos a la playa."],
+      ["ayer", "yesterday", "Ayer comimos muy bien."], ["ahora", "now", "Quiero otra ronda ahora."],
+      ["más tarde", "later", "Nos vemos más tarde."], ["¿Qué hora es?", "What time is it?", "Perdón, ¿qué hora es?"],
+      ["a las ocho", "at eight o'clock", "La cena es a las ocho."], ["el fin de semana", "the weekend", "El fin de semana vamos al centro."] ] },
+    { id: "a2-places", lv: "A2", title: "Lugares y cosas", sub: "Words for what you will look for", cards: [
+      ["la plaza", "main square", "Nos vemos en la plaza."], ["el mercado", "market", "El mercado abre temprano."],
+      ["la playa", "beach", "La playa está cerca."], ["el museo", "museum", "El museo cierra a las cinco."],
+      ["el cajero", "ATM", "Busco un cajero."], ["la farmacia", "pharmacy", "La farmacia está abierta."],
+      ["la estación", "station", "La estación está lejos."], ["la esquina", "street corner", "Está en la esquina."] ] },
+    { id: "a2-past", lv: "A2", title: "Verbos en pasado", sub: "Telling the story of your day", cards: [
+      ["fui", "I went / I was", "Ayer fui al mercado."], ["hice", "I did / I made", "Hice una reserva para seis."],
+      ["vi", "I saw", "Vi las ruinas de noche."], ["dije", "I said", "Le dije la dirección al taxista."],
+      ["tuve", "I had", "Tuve un día largo."], ["pude", "I was able to", "No pude encontrar el hotel."],
+      ["puse", "I put", "Puse el pasaporte en la mochila."], ["vine", "I came", "Vine en autobús."] ] },
+    { id: "b1-connect", lv: "B1", title: "Conectores", sub: "Link ideas in longer sentences", cards: [
+      ["sin embargo", "however", "Es caro; sin embargo, vale la pena."], ["por lo tanto", "therefore", "Llovió; por lo tanto, cambiamos el plan."],
+      ["a pesar de", "despite", "A pesar de la lluvia, salimos."], ["además", "besides / moreover", "Además, la comida es excelente."],
+      ["en cambio", "on the other hand", "Yo prefiero el campo; ella, en cambio, la ciudad."], ["ya que", "since / given that", "Voy a ir, ya que me invitaron."],
+      ["acerca de", "about", "Hablamos acerca de los planes."], ["mientras tanto", "meanwhile", "Mientras tanto, voy a pedir la cuenta."] ] },
+    { id: "b2-idioms", lv: "B2", title: "Modismos", sub: "Idioms that sound natural", cards: [
+      ["estar en las nubes", "to daydream", "Perdona, estaba en las nubes."], ["meter la pata", "to put your foot in it", "Metí la pata con ese comentario."],
+      ["costar un ojo de la cara", "to cost an arm and a leg", "Ese hotel cuesta un ojo de la cara."], ["no tener pelos en la lengua", "to speak bluntly", "Mi guía no tiene pelos en la lengua."],
+      ["dar en el clavo", "to hit the nail on the head", "Diste en el clavo con ese restaurante."], ["ponerse las pilas", "to get your act together", "Tienes que ponerte las pilas."],
+      ["hablar por los codos", "to talk nonstop", "El taxista habla por los codos."], ["echar una mano", "to lend a hand", "¿Me puede echar una mano?"] ] },
+
+    /* Mexico */
+    { id: "mx-talk", country: "mx", lv: "A2", title: "Así se habla en México", sub: "Everyday Mexican expressions", cards: [
+      ["¿Qué onda?", "What's up? (casual)", "¿Qué onda, cómo estás?"],
+      ["chido / padre", "cool, great", "Qué chido está este lugar."],
+      ["¡Órale!", "Wow! / Okay! / Come on!", "¡Órale, qué rápido!"],
+      ["ahorita", "right now, or in a little while", "Ahorita voy."],
+      ["¿Mande?", "Pardon? (polite)", "—¿Mande? No te escuché."],
+      ["la lana", "money (slang)", "No traigo lana."],
+      ["el antojito", "small street snack", "Vamos por unos antojitos."],
+      ["¡Buen provecho!", "Enjoy your meal!", "¡Buen provecho!, dijo el mesero."] ] },
+    { id: "mx-eat", country: "mx", lv: "B1", title: "Comer en México", sub: "Street food and set lunches", cards: [
+      ["la torta", "sandwich on a roll", "Quiero una torta de milanesa."],
+      ["el elote", "corn on the cob", "Un elote con todo, por favor."],
+      ["¿con todo?", "with everything? (toppings)", "—¿Con todo? —Sí, con todo."],
+      ["¿Pica mucho?", "Is it spicy?", "¿Pica mucho esta salsa?"],
+      ["la salsa", "sauce, salsa", "¿Cuál salsa es la más picosa?"],
+      ["el mole", "rich chile and spice sauce", "El mole poblano lleva chocolate."],
+      ["la comida corrida", "set-price lunch menu", "Busquemos una fonda con comida corrida."],
+      ["la propina", "tip", "En México la propina suele ser del diez al quince por ciento."] ] },
+
+    /* Ecuador */
+    { id: "ec-talk", country: "ec", lv: "A2", title: "Así se habla en Ecuador", sub: "Everyday Ecuadorian expressions", cards: [
+      ["¡Chuta!", "Darn! / Oops! (mild)", "¡Chuta, perdí el bus!"],
+      ["bacán", "cool, great", "Qué bacán está la playa."],
+      ["ñaño / ñaña", "brother / sister (also a close friend)", "Mi ñaño vive en Quito."],
+      ["la guagua", "baby, small child", "La guagua duerme."],
+      ["¡Achachay!", "Brr, it's cold!", "¡Achachay, qué frío en Quito!"],
+      ["¡Arrarray!", "Ouch, it's hot!", "¡Arrarray, está caliente la sopa!"],
+      ["la plata", "money", "No tengo plata en efectivo."],
+      ["ya", "okay, got it", "—¿Nos vemos a las ocho? —Ya."] ] },
+    { id: "ec-eat", country: "ec", lv: "B1", title: "Comer en Ecuador", sub: "Coast and Andes dishes", cards: [
+      ["el almuerzo", "set lunch (soup, main, juice)", "El almuerzo cuesta unos cuatro dólares."],
+      ["el encebollado", "fish and onion soup (coast)", "El encebollado es famoso en Guayaquil."],
+      ["el locro de papa", "potato and cheese soup (Andes)", "Pedí locro de papa con aguacate."],
+      ["la fritada", "fried pork dish", "La fritada viene con mote y maduro."],
+      ["el hornado", "roast pork", "El hornado se sirve con llapingachos."],
+      ["el cuy", "guinea pig (festive dish)", "En la Sierra puedes probar cuy."],
+      ["el jugo de naranjilla", "naranjilla juice", "Quiero un jugo de naranjilla."],
+      ["el ají", "hot sauce", "¿Me trae ají, por favor?"] ] },
+
+    /* Colombia */
+    { id: "co-talk", country: "co", lv: "A2", title: "Así se habla en Colombia", sub: "Everyday Colombian expressions", cards: [
+      ["bacano", "cool, great", "Este lugar está muy bacano."],
+      ["parce", "buddy, pal", "¿Qué más, parce?"],
+      ["¿Qué más?", "What's up? (greeting)", "¡Hola! ¿Qué más?"],
+      ["¡Qué pena!", "Sorry! / Excuse me!", "¡Qué pena, no lo vi!"],
+      ["a la orden", "at your service", "—Gracias. —A la orden."],
+      ["un tinto", "a small black coffee", "Un tinto, por favor."],
+      ["me regala...", "could I have... (polite)", "¿Me regala un jugo de lulo?"],
+      ["de una", "sure! / right away", "—¿Vamos? —¡De una!"],
+      ["¡Listo!", "Okay! / Done!", "Listo, nos vemos a las ocho."] ] },
+    { id: "co-eat", country: "co", lv: "B1", title: "Comer en Colombia", sub: "Regional dishes and drinks", cards: [
+      ["la bandeja paisa", "hearty platter (beans, rice, meat, plantain)", "La bandeja paisa es enorme; ven con hambre."],
+      ["el ajiaco", "chicken and potato soup (Bogotá)", "El ajiaco es típico de Bogotá."],
+      ["la arepa", "corn cake", "Desayuné arepa con queso."],
+      ["el sancocho", "hearty meat and vegetable stew", "Los domingos hacemos sancocho."],
+      ["la empanada", "stuffed fried pastry", "Dos empanadas con ají, por favor."],
+      ["el jugo de lulo", "lulo fruit juice", "Un jugo de lulo en agua, por favor."],
+      ["el corrientazo", "inexpensive set lunch", "Almorcé un corrientazo cerca de la plaza."],
+      ["el aguapanela", "hot sugarcane drink", "Con el frío de Bogotá, pido aguapanela."] ] }
+  ];
+  /* ---------- Trip Pack: phrases you will actually say ----------
+     Card: [spanish, english, tip]. Spanish and tip may be objects keyed by country (mx, ec, co).
+     "___" marks a blank you fill in with a place, a name or a number. */
+  var TRIP_DECKS = [
+    { id: "p-basics", kind: "phrase", lv: "TRIP", regional: true, title: "Lo básico", sub: "Greetings and getting understood", cards: [
+      ["Buenos días.", "Good morning.", "Say it to everyone you walk up to: staff, drivers, shopkeepers."],
+      ["Por favor.", "Please.", ""],
+      ["Muchas gracias.", "Thank you very much.", ""],
+      [{ mx: "De nada.", ec: "De nada.", co: "Con gusto." }, "You're welcome.", { mx: "", ec: "", co: "“Con gusto” is the everyday Colombian reply." }],
+      ["Con permiso.", "Excuse me (to get past).", "Use it when squeezing past people in a bar or on a bus."],
+      [{ mx: "Perdón.", ec: "Disculpe.", co: "¡Qué pena!" }, "Sorry / excuse me.", { mx: "", ec: "", co: "“Qué pena” is a very Colombian way to say sorry." }],
+      ["Hablo poco español.", "I speak a little Spanish.", "It makes people slow down and help."],
+      ["¿Habla inglés?", "Do you speak English?", ""],
+      ["¿Puede hablar más despacio?", "Can you speak more slowly?", ""],
+      ["No entiendo.", "I don't understand.", ""],
+      ["¿Cómo se dice ___ en español?", "How do you say ___ in Spanish?", "Point at the thing and ask."] ] },
+    { id: "p-move", kind: "phrase", lv: "TRIP", regional: true, title: "Taxi y transporte", sub: "Getting from A to B", cards: [
+      ["Al aeropuerto, por favor.", "To the airport, please.", ""],
+      ["Al hotel ___, por favor.", "To the ___ hotel, please.", "Show the address on your phone too."],
+      ["¿Cuánto cuesta ir a ___?", "How much to go to ___?", "Ask before you get in."],
+      ["¿Puede encender el taxímetro?", "Can you turn on the meter?", ""],
+      ["Aquí está bien, gracias.", "Right here is fine, thanks.", "Tell the driver where to stop."],
+      ["¿Tiene cambio?", "Do you have change?", "Useful when you only have large bills."],
+      [{ mx: "¿Dónde se toma el camión a ___?", ec: "¿Dónde se toma el bus a ___?", co: "¿Dónde se toma el bus a ___?" }, "Where do I catch the bus to ___?", { mx: "In Mexico a city bus is “el camión”.", ec: "", co: "" }],
+      [{ mx: "¿Cuánto cuesta el boleto?", ec: "¿Cuánto cuesta el pasaje?", co: "¿Cuánto cuesta el tiquete?" }, "How much is the ticket / fare?", ""],
+      [{ mx: "¿Dónde puedo estacionarme?", ec: "¿Dónde puedo parquear?", co: "¿Dónde puedo parquear?" }, "Where can I park?", ""],
+      ["¿Cuánto tiempo se tarda?", "How long does it take?", ""] ] },
+    { id: "p-eat", kind: "phrase", lv: "TRIP", regional: true, title: "Comer y beber", sub: "Tables, orders and the check", cards: [
+      ["Una mesa para ___, por favor.", "A table for ___, please.", "Say the number of people."],
+      ["¿Me trae el menú, por favor?", "Could you bring me the menu?", ""],
+      ["¿Qué me recomienda?", "What do you recommend?", "The best way to find the good dish."],
+      ["Quisiera ___, por favor.", "I'd like ___, please.", "Softer and more polite than “quiero”."],
+      ["Sin picante, por favor.", "Not spicy, please.", ""],
+      ["¿Qué lleva este plato?", "What's in this dish?", ""],
+      ["Soy alérgico a ___.", "I'm allergic to ___.", ""],
+      [{ mx: "Agua natural, por favor.", ec: "Agua sin gas, por favor.", co: "Agua sin gas, por favor." }, "Still water, please.", ""],
+      ["Estuvo delicioso.", "That was delicious.", ""],
+      ["La cuenta, por favor.", "The check, please.", ""],
+      ["¿Podemos pagar por separado?", "Can we pay separately?", ""],
+      ["¿La propina ya está incluida?", "Is the tip already included?", ""] ] },
+    { id: "p-bar", kind: "phrase", lv: "TRIP", title: "Bares y salir", sub: "Drinks, rounds and the tab", cards: [
+      ["Una ronda de cervezas, por favor.", "A round of beers, please.", ""],
+      ["Otra ronda, por favor.", "Another round, please.", ""],
+      ["Bien fría, por favor.", "Nice and cold, please.", ""],
+      ["¿Qué cervezas tienen?", "What beers do you have?", ""],
+      ["¡Salud!", "Cheers!", ""],
+      ["Una sola cuenta para la mesa.", "One tab for the whole table.", ""],
+      ["Sin hielo, por favor.", "No ice, please.", ""],
+      ["¿A qué hora cierran?", "What time do you close?", ""],
+      ["¿Cobran entrada?", "Is there a cover charge?", ""],
+      ["Estoy bien, gracias.", "I'm good, thanks.", "A polite way to turn down another drink."] ] },
+    { id: "p-stay", kind: "phrase", lv: "TRIP", regional: true, title: "Hotel", sub: "Check in and small problems", cards: [
+      [{ mx: "Tengo una reservación a nombre de ___.", ec: "Tengo una reserva a nombre de ___.", co: "Tengo una reserva a nombre de ___." }, "I have a reservation under ___.", { mx: "Mexicans say “reservación”.", ec: "", co: "" }],
+      ["¿A qué hora es el desayuno?", "What time is breakfast?", ""],
+      ["¿Cuál es la contraseña del wifi?", "What's the wifi password?", ""],
+      ["El aire acondicionado no funciona.", "The air conditioning doesn't work.", ""],
+      ["No hay agua caliente.", "There's no hot water.", ""],
+      ["¿Puedo dejar mis maletas aquí?", "Can I leave my bags here?", "Handy before check-in and after check-out."],
+      ["¿A qué hora es la salida?", "What time is check-out?", ""],
+      ["Necesito toallas limpias.", "I need clean towels.", ""] ] },
+    { id: "p-way", kind: "phrase", lv: "TRIP", title: "Direcciones", sub: "Ask the way and follow the answer", cards: [
+      ["Disculpe, ¿dónde está ___?", "Excuse me, where is ___?", ""],
+      ["¿Cómo llego a ___?", "How do I get to ___?", ""],
+      ["¿Queda lejos?", "Is it far?", ""],
+      ["¿Se puede ir caminando?", "Can I walk there?", ""],
+      ["¿Me lo puede mostrar en el mapa?", "Can you show me on the map?", ""],
+      ["Estoy perdido.", "I'm lost.", ""],
+      ["Siga derecho dos cuadras.", "Go straight two blocks.", "You will hear this one. No need to say it."],
+      ["Gire a la izquierda.", "Turn left.", "You will hear this one. “A la derecha” is right."],
+      ["¿Dónde está el baño?", "Where is the bathroom?", ""] ] },
+    { id: "p-shop", kind: "phrase", lv: "TRIP", title: "Compras y dinero", sub: "Prices, cards and cash", cards: [
+      ["¿Cuánto cuesta esto?", "How much is this?", ""],
+      ["Está muy caro.", "That's very expensive.", ""],
+      ["¿Me hace un descuento?", "Can you give me a discount?", "Common in markets. Smile when you ask."],
+      ["¿Aceptan tarjeta?", "Do you take cards?", ""],
+      ["Solo efectivo.", "Cash only.", "You will hear this one."],
+      ["¿Dónde hay un cajero automático?", "Where is there an ATM?", ""],
+      ["Me lo llevo.", "I'll take it.", ""],
+      ["Solo estoy mirando, gracias.", "I'm just looking, thanks.", ""],
+      ["¿Me da un recibo, por favor?", "Could I have a receipt?", ""] ] },
+    { id: "p-help", kind: "phrase", lv: "TRIP", regional: true, title: "Ayuda y emergencias", sub: "Say it clearly when it matters", cards: [
+      [{ mx: "Llame al 911.", ec: "Llame al 911.", co: "Llame al 123." }, "Call the emergency number.", { mx: "Mexico's emergency number is 911.", ec: "Ecuador's emergency number is 911.", co: "Colombia's emergency number is 123." }],
+      ["¡Ayuda!", "Help!", ""],
+      ["Necesito un médico.", "I need a doctor.", ""],
+      [{ mx: "Me robaron la cartera.", ec: "Me robaron la billetera.", co: "Me robaron la billetera." }, "My wallet was stolen.", ""],
+      ["Perdí mi pasaporte.", "I lost my passport.", ""],
+      ["¿Dónde está la farmacia?", "Where is the pharmacy?", ""],
+      ["Me siento mal.", "I feel sick.", ""],
+      ["Llame a la policía.", "Call the police.", ""],
+      ["¿Dónde está la embajada de Estados Unidos?", "Where is the US embassy?", ""] ] }
+  ];
+  DECKS = TRIP_DECKS.concat(DECKS);
+
+  /* ---------- Scenes: short conversations with local replies ----------
+     A turn has: npc {es, en} (what you hear), optional ask {q, opts, a} (a listening check),
+     optional you {intent, opts:[{es, ok, why}]} (pick your line). Text can be an object keyed by country. */
+  var SCENES = [
+    { id: "taxi", title: "Del aeropuerto al hotel", sub: "Taxi: destination, price, drop-off", turns: [
+      { npc: { es: { mx: "Buenas tardes. ¿A dónde lo llevo?", ec: "Buenas tardes. ¿A dónde va?", co: "Buenas tardes. ¿Para dónde va?" }, en: "Good afternoon. Where to?" },
+        you: { intent: "Say you are going to the Hotel Plaza and ask what it costs.", opts: [
+          { es: "Al Hotel Plaza, por favor. ¿Cuánto cuesta?", ok: true, why: "Polite and direct. “Al…” plus “por favor” is what drivers expect." },
+          { es: "Yo quiero Hotel Plaza ahora.", why: "People will understand, but “quiero” sounds like a demand. Start with “Al…” and finish with “por favor”." },
+          { es: "El Hotel Plaza está muy lejos.", why: "That says the hotel is very far. It does not tell him where to take you." } ] } },
+      { npc: { es: { mx: "Son ciento cincuenta pesos.", ec: "Son cuatro dólares.", co: "Son quince mil pesos." }, en: { mx: "That's 150 pesos.", ec: "That's 4 dollars.", co: "That's 15,000 pesos." } },
+        ask: { q: "How much does he say?", a: 1, opts: { mx: ["115 pesos", "150 pesos", "500 pesos"], ec: ["$14", "$4", "$40"], co: ["50,000 pesos", "15,000 pesos", "1,500 pesos"] } },
+        you: { intent: "It sounds high. Ask him to turn on the meter.", opts: [
+          { es: "¿Puede encender el taxímetro, por favor?", ok: true, why: "“Encender” means to turn on. It is a normal request and keeps the price fair." },
+          { es: "¿Dónde está el taxímetro?", why: "That asks where the meter is. It does not ask him to use it." },
+          { es: "No me gusta el taxi.", why: "That says you do not like the taxi, which is not the request." } ] } },
+      { npc: { es: { mx: "Sí, claro. Súbase.", ec: "Sí, claro. Suba.", co: "Claro que sí. Súbase." }, en: "Sure. Get in." },
+        you: { intent: "Ask how long the ride takes.", opts: [
+          { es: "¿Cuánto tiempo se tarda?", ok: true, why: "“Se tarda” is the natural way to ask how long something takes." },
+          { es: "¿Cuánto cuesta el tiempo?", why: "That means “how much does time cost?”" },
+          { es: "¿A qué hora es?", why: "That asks what time it is, not how long the ride is." } ] } },
+      { npc: { es: { mx: "Veinte minutos, más o menos. Hay un poco de tráfico.", ec: "Veinte minutos, más o menos. Hay un poco de tráfico.", co: "Veinte minutos, más o menos. Hay un poco de trancón." }, en: "About twenty minutes. There's a bit of traffic." },
+        ask: { q: "How long, and what is slowing things down?", a: 0, opts: { any: ["About 20 minutes, some traffic", "About 12 minutes, no traffic", "About 2 hours, a traffic jam"] } },
+        you: { intent: "You have arrived. Say right here is fine and thank him.", opts: [
+          { es: "Aquí está bien, gracias.", ok: true, why: "That tells him to stop right here and thanks him." },
+          { es: "Aquí no, gracias.", why: "That says “not here”, so he would keep driving." },
+          { es: "Aquí está mal, adiós.", why: "That says “here is wrong”. It is not the polite way to ask him to stop." } ] } }
+    ] },
+    { id: "table", title: "Una mesa para el grupo", sub: "Getting seated, ordering and paying", turns: [
+      { npc: { es: "Buenas noches. ¿Cuántos son?", en: "Good evening. How many are you?" },
+        you: { intent: "Say there are six of you.", opts: [
+          { es: "Somos seis.", ok: true, why: "“Somos” means “we are”." },
+          { es: "Soy seis.", why: "“Soy” means “I am”, so this says you alone are six." },
+          { es: "Seis mesas, por favor.", why: "That asks for six tables." } ] } },
+      { npc: { es: { mx: "Bienvenidos. ¿Qué les sirvo de tomar?", ec: "Bienvenidos. ¿Qué desean tomar?", co: "Bienvenidos. ¿Qué les puedo ofrecer de tomar?" }, en: "Welcome. What can I get you to drink?" },
+        you: { intent: "Ask for six beers, nice and cold.", opts: [
+          { es: "Seis cervezas bien frías, por favor.", ok: true, why: "Six beers, very cold. “Bien” works like “nice and”." },
+          { es: "Seis cervezas calientes, por favor.", why: "“Calientes” means hot." },
+          { es: "Una cerveza para seis, por favor.", why: "That asks for one beer to share between six." } ] } },
+      { npc: { es: { mx: "Hoy tenemos tacos al pastor y arrachera.", ec: "Hoy tenemos encebollado y ceviche de camarón.", co: "Hoy tenemos bandeja paisa y sancocho." },
+          en: { mx: "Today we have tacos al pastor and skirt steak.", ec: "Today we have encebollado (fish soup) and shrimp ceviche.", co: "Today we have bandeja paisa and sancocho." } },
+        ask: { q: "What are today's specials?", a: 0, opts: {
+          mx: ["Tacos al pastor and skirt steak", "Fish tacos and shrimp", "Enchiladas and tamales"],
+          ec: ["Encebollado and shrimp ceviche", "Locro and fritada", "Hornado and guinea pig"],
+          co: ["Bandeja paisa and sancocho", "Ajiaco and empanadas", "Arepas and chorizo"] } },
+        you: { intent: "Say you would like the first dish.", opts: [
+          { es: { mx: "Quisiera los tacos al pastor, por favor.", ec: "Quisiera el encebollado, por favor.", co: "Quisiera la bandeja paisa, por favor." }, ok: true, why: "“Quisiera” is the polite way to say “I'd like”." },
+          { es: "Quisiera la cuenta, por favor.", why: "That asks for the check, which is too early." },
+          { es: "Nada, gracias.", why: "That says “nothing, thanks”." } ] } },
+      { npc: { es: "¿Todo bien? ¿Desean algo más?", en: "Everything good? Would you like anything else?" },
+        you: { intent: "Say it was delicious and ask for the check.", opts: [
+          { es: "Estuvo delicioso. La cuenta, por favor.", ok: true, why: "Compliment first, then the check." },
+          { es: "Estuvo delicioso. Otra ronda, por favor.", why: "That asks for another round, not the check." },
+          { es: "Estuvo muy mal. La cuenta, por favor.", why: "“Muy mal” means very bad. Probably not what you meant." } ] } },
+      { npc: { es: "Claro. ¿Todo junto o por separado?", en: "Of course. All together or separate?" },
+        you: { intent: "Say all on one bill.", opts: [
+          { es: "Todo junto, por favor.", ok: true, why: "“Junto” means together." },
+          { es: "Todo separado, por favor.", why: "“Separado” means separate, the opposite of what you want." },
+          { es: "¿Todo gratis?", why: "That asks if everything is free." } ] } }
+    ] },
+    { id: "bar", title: "Una ronda", sub: "Drinks, a toast and the tab", turns: [
+      { npc: { es: { mx: "¿Qué les damos?", ec: "¿Qué van a querer?", co: "¿Qué les traigo?" }, en: "What can I get you?" },
+        you: { intent: "Order a round of beers for the group.", opts: [
+          { es: "Una ronda de cervezas, por favor.", ok: true, why: "“Una ronda de…” is exactly how you order for the group." },
+          { es: "Una cerveza redonda, por favor.", why: "That means a round-shaped beer." },
+          { es: "Cervezas ronda una, por favor.", why: "The word order is off. Say “Una ronda de cervezas”." } ] } },
+      { npc: { es: "Aquí tienen. ¡Salud!", en: "Here you go. Cheers!" },
+        you: { intent: "Raise your glass and answer the toast.", opts: [
+          { es: "¡Salud!", ok: true, why: "“Salud” is the toast, the same word as “health”." },
+          { es: "¡Gracias, adiós!", why: "That says thanks and goodbye. Nobody is leaving yet." },
+          { es: "¡Hasta luego!", why: "That means “see you later”." } ] } },
+      { npc: { es: "¿Algo más?", en: "Anything else?" },
+        you: { intent: "Ask for one check for the whole table.", opts: [
+          { es: "La cuenta de toda la mesa, por favor.", ok: true, why: "“De toda la mesa” means for the whole table." },
+          { es: "¿Dónde está la mesa, por favor?", why: "That asks where the table is." },
+          { es: "Una cuenta para mí solo, por favor.", why: "That asks for a check for you alone." } ] } },
+      { npc: { es: { mx: "Son trescientos sesenta pesos.", ec: "Son dieciocho dólares.", co: "Son sesenta mil pesos." }, en: { mx: "That's 360 pesos.", ec: "That's 18 dollars.", co: "That's 60,000 pesos." } },
+        ask: { q: "What is the total?", a: 1, opts: { mx: ["316 pesos", "360 pesos", "630 pesos"], ec: ["$8", "$18", "$80"], co: ["16,000 pesos", "60,000 pesos", "6,000 pesos"] } },
+        you: { intent: "Ask if they take cards.", opts: [
+          { es: "¿Aceptan tarjeta?", ok: true, why: "“Aceptan” plus “tarjeta” is the standard question." },
+          { es: "¿Tienen tarjeta de cumpleaños?", why: "That asks if they have a birthday card." },
+          { es: "¿Dónde está el cajero?", why: "That asks where the ATM is, which does not answer the question." } ] } }
+    ] },
+    { id: "hotel", title: "Check-in en el hotel", sub: "Reservation, passports and breakfast", turns: [
+      { npc: { es: { mx: "Buenas noches, bienvenidos. ¿Tienen reservación?", ec: "Buenas noches, bienvenidos. ¿Tienen reserva?", co: "Buenas noches, bienvenidos. ¿Tienen reserva?" }, en: "Good evening, welcome. Do you have a reservation?" },
+        you: { intent: "Say yes, under your last name (we used Smith).", opts: [
+          { es: { mx: "Sí, tenemos una reservación a nombre de Smith.", ec: "Sí, tenemos una reserva a nombre de Smith.", co: "Sí, tenemos una reserva a nombre de Smith." }, ok: true, why: "“A nombre de…” means “under the name of…”." },
+          { es: "No, solo estamos mirando.", why: "That says “no, we are just looking”." },
+          { es: "Sí, tengo un nombre de reserva.", why: "That says you have a name of reservation, which is garbled." } ] } },
+      { npc: { es: "Perfecto. ¿Me permite sus pasaportes, por favor?", en: "Perfect. May I have your passports, please?" },
+        you: { intent: "Hand them over politely.", opts: [
+          { es: "Claro, aquí tiene.", ok: true, why: "“Aquí tiene” is what you say when you hand something over." },
+          { es: "No, gracias.", why: "That declines the request." },
+          { es: "Aquí está mi hotel.", why: "That says “here is my hotel”." } ] } },
+      { npc: { es: "El desayuno es de siete a diez, en el segundo piso.", en: "Breakfast is from seven to ten, on the second floor." },
+        ask: { q: "When and where is breakfast?", a: 0, opts: { any: ["7 to 10, second floor", "7 to 10, first floor", "10 to 7, second floor"] } },
+        you: { intent: "Ask for the wifi password.", opts: [
+          { es: "¿Cuál es la contraseña del wifi?", ok: true, why: "“Contraseña” is password." },
+          { es: "¿Cuál es la contraseña del baño?", why: "That asks for the bathroom's password." },
+          { es: "¿A qué hora es el wifi?", why: "That asks what time the wifi is." } ] } },
+      { npc: { es: "Su habitación es la trescientos cinco, en el tercer piso. Aquí tienen las llaves.", en: "Your room is 305, on the third floor. Here are the keys." },
+        ask: { q: "Which room and floor?", a: 0, opts: { any: ["Room 305, third floor", "Room 315, third floor", "Room 305, fifth floor"] } },
+        you: { intent: "Thank them and ask what time check-out is.", opts: [
+          { es: "Muchas gracias. ¿A qué hora es la salida?", ok: true, why: "“La salida” is check-out." },
+          { es: "Muchas gracias. ¿Dónde está la salida?", why: "That asks where the exit is." },
+          { es: "Muchas gracias. ¿A qué hora es la llegada?", why: "“La llegada” is arrival, the opposite of check-out." } ] } }
+    ] },
+    { id: "lost", title: "Perdidos en la ciudad", sub: "Ask the way and follow the answer", turns: [
+      { npc: { es: "Buenas tardes. ¿Puedo ayudarle?", en: "Good afternoon. Can I help you?" },
+        you: { intent: "Say you are lost and ask how to get to the main square.", opts: [
+          { es: "Sí, estoy perdido. ¿Cómo llego a la plaza?", ok: true, why: "“Llego” means “I arrive”, which is what you want." },
+          { es: "Sí, estoy perdido. ¿Cómo llegó la plaza?", why: "“Llegó” is “he or she arrived”, so this asks how the square arrived." },
+          { es: "Sí, estoy aquí. ¿Dónde está mi plaza?", why: "That asks where your square is, which is confusing." } ] } },
+      { npc: { es: "Siga derecho dos cuadras y luego gire a la izquierda.", en: "Go straight two blocks and then turn left." },
+        ask: { q: "Where do you turn?", a: 0, opts: { any: ["Left after two blocks", "Right after two blocks", "Left after twenty blocks"] } },
+        you: { intent: "Ask if it is far.", opts: [
+          { es: "¿Queda lejos?", ok: true, why: "“Queda lejos” is the standard way to ask if a place is far." },
+          { es: "¿Cuesta lejos?", why: "“Cuesta” is about price, not distance." },
+          { es: "¿Cuánto lejos?", why: "That is garbled. Use “¿Queda lejos?”." } ] } },
+      { npc: { es: "No, está como a cinco minutos caminando.", en: "No, it's about five minutes on foot." },
+        ask: { q: "How far is it?", a: 0, opts: { any: ["About 5 minutes on foot", "About 15 minutes on foot", "About 5 minutes by car"] } },
+        you: { intent: "Thank him warmly.", opts: [
+          { es: "Muchas gracias, ¡qué amable!", ok: true, why: "“Qué amable” means “how kind of you”." },
+          { es: "Muchas gracias, ¡qué lejos!", why: "That says “how far!”" },
+          { es: "Muchas gracias, ¡qué caro!", why: "That says “how expensive!”" } ] } },
+      { npc: { es: { mx: "Con gusto. ¡Buen viaje!", ec: "De nada. ¡Buen viaje!", co: "A la orden. ¡Buen viaje!" }, en: "You're welcome. Have a good trip!" } }
+    ] }
+  ];
+
+  var BOX_DAYS = [0, 1, 3, 7, 14];
+
+  /* ---------- State and persistence ---------- */
+  /* Fill these in from your Supabase project (Settings > API). The anon key is meant to be public;
+     row-level security (see supabase/schema.sql) is what protects each person's data. */
+  var SUPABASE_URL = "";
+  var SUPABASE_ANON_KEY = "";
+  var TABLE = "rumbo_progress";
+  var KEY = "rumbo.v1";
+  function blank() { return { placement: null, history: [], country: null, owner: null, cards: {}, streak: 0, lastDay: null, reviewed: 0, updated: 0, favs: [], scenes: {}, daily: {}, tripDate: null, group: null, left: [], hideText: false }; }
+  var S = blank();
+  var A = { sb: null, user: null, mode: "in", msg: null, email: "", status: "off", signoutWarn: false, confirmDelete: false, lastPull: 0 };
+  try { var raw = localStorage.getItem(KEY); if (raw) S = Object.assign(blank(), JSON.parse(raw)); } catch (e) {}
+  function saveLocal() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  function save() {
+    S.updated = Date.now();
+    saveLocal();
+    if (A.user) schedulePush();
+  }
+
+  /* ---------- Helpers ---------- */
+  function today() { var d = new Date(); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
+  function dayNum(s) { var p = s.split("-"); return Math.floor(new Date(+p[0], +p[1] - 1, +p[2]).getTime() / 86400000); }
+  function touchStreak() {
+    var t = today();
+    if (S.lastDay === t) return;
+    S.streak = (S.lastDay && dayNum(t) - dayNum(S.lastDay) === 1) ? S.streak + 1 : 1;
+    S.lastDay = t;
+  }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var x = a[i]; a[i] = a[j]; a[j] = x; } return a; }
+  function $(id) { return document.getElementById(id); }
+  function levelIdx(l) { return LEVELS.indexOf(l); }
+  function C() { return S.country || "mx"; }
+  function R(v) { if (v == null) return ""; if (typeof v === "string") return v; var k = C(); return v[k] !== undefined ? v[k] : (v.any !== undefined ? v.any : v.mx); }
+  function cardR(deck, i) { var c = deck.cards[i]; return [R(c[0]), c[1], R(c[2])]; }
+  function visibleDecks() { return DECKS.filter(function (d) { return !d.country || d.country === C(); }); }
+  function cardId(deck, i) { return deck.id + (deck.regional ? "@" + C() : "") + ":" + i; }
+  function cardState(deck, i) { return S.cards[cardId(deck, i)] || { box: 0, due: null, seen: false }; }
+  function isDue(c) { return !c.seen || (c.due !== null && c.due <= dayNum(today())); }
+  function grade(deck, i, good) {
+    var id = cardId(deck, i), c = S.cards[id] || { box: 0, due: null, seen: false };
+    c.seen = true; c.t = Date.now();
+    c.box = good ? Math.min(c.box + 1, 4) : 0;
+    c.due = dayNum(today()) + BOX_DAYS[c.box];
+    S.cards[id] = c;
+    S.reviewed += 1;
+    touchStreak(); save();
+  }
+  function mastered(deck) { var n = 0; deck.cards.forEach(function (_, i) { if (cardState(deck, i).box >= 2) n++; }); return n; }
+  function dueCount(deck) { var n = 0; deck.cards.forEach(function (_, i) { if (isDue(cardState(deck, i))) n++; }); return n; }
+  function say(text) {
+    try { var u = new SpeechSynthesisUtterance(String(text).replace(/_{2,}/g, " ")); u.lang = COUNTRIES[C()].lang; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); } catch (e) {}
+  }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var canSpeak = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+
+  function renderTrip() {
+    $("trip").innerHTML = '<span class="lbl">Viajo a</span>' + Object.keys(COUNTRIES).map(function (k) {
+      return '<button class="chip" data-country="' + k + '" aria-pressed="' + (S.country === k) + '">' + COUNTRIES[k].name + '<small>' + COUNTRIES[k].code + '</small></button>';
+    }).join("") + (deferredInstall ? '<button class="chip" data-act="install">Instalar app</button>' : "") +
+      (A.sb ? '<button class="chip" data-go="account" style="margin-left:auto">' + (A.user ? '<span class="dot ' + A.status + '"></span>Cuenta' : 'Entrar') + '</button>' : "");
+  }
+  function tripNotes() {
+    var c = COUNTRIES[C()];
+    return '<section class="panel"><div class="eyebrow">Notas de viaje · ' + c.name + '</div>' +
+      '<div class="stats"><div class="stat"><b class="mono" style="font-size:1.4rem">' + c.emergency + '</b><span>emergency number</span></div>' +
+      '<div class="stat"><b style="font-size:1.1rem;line-height:1.2">' + c.currency + '</b><span>currency</span></div></div>' +
+      '<ul class="list">' + c.notes.map(function (n) { return '<li>' + n + '</li>'; }).join("") + '</ul></section>';
+  }
+  function ladder(placed) {
+    var pi = placed ? levelIdx(placed) : -1;
+    return '<div class="ladder" role="img" aria-label="Escala de niveles">' + LEVELS.map(function (l, i) {
+      var cls = i === pi ? "here" : (i < pi ? "done" : "");
+      return '<div class="rung ' + cls + '"><b>' + l + '</b><span>' + LEVEL_NAMES[l] + '</span></div>';
+    }).join("") + '</div>';
+  }
+
+
+
+  /* ---------- Accounts and sync (Supabase) ---------- */
+  var STATUS_TEXT = {
+    ok: "Progress saved to your account.",
+    pending: "Saving…", syncing: "Saving…",
+    error: "Could not reach the server. Your progress is kept on this device and will sync when you are back online.",
+    off: ""
+  };
+  function mergeState(a, b) {
+    var out = blank(), ids = {}, k;
+    [a.cards || {}, b.cards || {}].forEach(function (m) { for (k in m) ids[k] = 1; });
+    for (k in ids) {
+      var x = (a.cards || {})[k], y = (b.cards || {})[k];
+      if (!x) out.cards[k] = y; else if (!y) out.cards[k] = x;
+      else out.cards[k] = ((x.t || 0) !== (y.t || 0) ? (x.t || 0) > (y.t || 0) : x.box >= y.box) ? x : y;
+    }
+    out.reviewed = Math.max(a.reviewed || 0, b.reviewed || 0);
+    var la = a.lastDay, lb = b.lastDay;
+    if (la && lb) {
+      var da = dayNum(la), db = dayNum(lb);
+      if (da === db) { out.lastDay = la; out.streak = Math.max(a.streak || 0, b.streak || 0); }
+      else if (da > db) { out.lastDay = la; out.streak = a.streak || 0; }
+      else { out.lastDay = lb; out.streak = b.streak || 0; }
+    } else { out.lastDay = la || lb || null; out.streak = la ? (a.streak || 0) : (b.streak || 0); }
+    var pa = a.placement, pb = b.placement;
+    out.placement = pa && pb ? ((pa.t || 0) > (pb.t || 0) ? pa : pb) : (pa || pb || null);
+    var seen = {};
+    out.history = (a.history || []).concat(b.history || []).filter(function (h) {
+      var key = h.date + "|" + h.level + "|" + (h.scores || []).join(",");
+      if (seen[key]) return false; seen[key] = 1; return true;
+    });
+    var nw = (a.updated || 0) >= (b.updated || 0) ? a : b, od = nw === a ? b : a;
+    out.favs = (a.favs || []).concat(b.favs || []).filter(function (x, i, arr) { return arr.indexOf(x) === i; });
+    [a.scenes || {}, b.scenes || {}].forEach(function (m) { for (var id in m) { var p = out.scenes[id]; out.scenes[id] = p ? { best: Math.max(p.best || 0, m[id].best || 0), t: Math.max(p.t || 0, m[id].t || 0) } : m[id]; } });
+    [a.daily || {}, b.daily || {}].forEach(function (m) { for (var dk in m) { out.daily[dk] = Object.assign(out.daily[dk] || {}, m[dk]); } });
+    out.tripDate = nw.tripDate || od.tripDate || null;
+    out.hideText = !!nw.hideText;
+    out.left = (a.left || []).concat(b.left || []).filter(function (x, i, arr) { return arr.indexOf(x) === i; });
+    var gn = nw.group && nw.group.name ? nw.group : (od.group && od.group.name ? od.group : (nw.group || od.group || null));
+    out.group = gn && out.left.indexOf(gn.code) < 0 ? gn : null;
+    out.country = ((a.updated || 0) >= (b.updated || 0) ? (a.country || b.country) : (b.country || a.country)) || null;
+    out.updated = Math.max(a.updated || 0, b.updated || 0, Date.now());
+    return out;
+  }
+  function setStatus(st) {
+    A.status = st; renderTrip();
+    var el = $("syncline");
+    if (el) el.innerHTML = '<span class="dot ' + st + '"></span>' + esc(STATUS_TEXT[st] || "");
+  }
+  var pushTimer = null;
+  function schedulePush() { if (!A.user) return; setStatus("pending"); clearTimeout(pushTimer); pushTimer = setTimeout(push, 1500); }
+  async function push() {
+    if (!A.sb || !A.user) return false;
+    clearTimeout(pushTimer);
+    setStatus("syncing");
+    try {
+      var r = await A.sb.from(TABLE).upsert({ user_id: A.user.id, state: S, updated_at: new Date().toISOString() });
+      if (r.error) { setStatus("error"); return false; }
+      setStatus("ok"); pushGroup(); return true;
+    } catch (e) { setStatus("error"); return false; }
+  }
+  /* ---- group leaderboard: one row per person per group code ---- */
+  var GTABLE = "rumbo_group_members";
+  function weekDays() {
+    var n = 0, t = dayNum(today());
+    for (var k in S.daily) { var x = S.daily[k], age = t - dayNum(k); if (x && age >= 0 && age < 7 && (x.review || x.scene || x.speak)) n++; }
+    return n;
+  }
+  function newGroupCode() {
+    var al = "ABCDEFGHJKMNPQRSTUVWXYZ23456789", b = new Uint8Array(8), s = "", i;
+    (window.crypto || window.msCrypto).getRandomValues(b);
+    for (i = 0; i < 8; i++) s += al.charAt(b[i] % al.length);
+    return s;
+  }
+  async function pushGroup() {
+    if (!A.sb || !A.user || !S.group || !S.group.name) return;
+    try {
+      await A.sb.from(GTABLE).upsert({ group_code: S.group.code, user_id: A.user.id, display_name: S.group.name, learned: learnedPhrases(), streak: S.streak, week_days: weekDays(), updated_at: new Date().toISOString() });
+    } catch (e) {}
+  }
+  async function loadGroup(force) {
+    if (!A.sb || !A.user || !S.group || !S.group.name) return;
+    var code = S.group.code;
+    if (!A.group || A.group.code !== code) A.group = { code: code, rows: null, err: false, t: 0 };
+    if (!force && Date.now() - A.group.t < 30000) return;
+    A.group.t = Date.now();
+    try {
+      await pushGroup();
+      var r = await A.sb.from(GTABLE).select("user_id, display_name, learned, streak, week_days").eq("group_code", code);
+      if (!A.group || A.group.code !== code) return;
+      if (r.error) A.group.err = true; else { A.group.rows = r.data || []; A.group.err = false; }
+    } catch (e) { if (A.group) A.group.err = true; }
+    var ae = document.activeElement;
+    if (view === "home" && !P && !SC && !(ae && /INPUT|TEXTAREA/.test(ae.tagName))) render();
+  }
+  async function leaveGroup() {
+    var code = S.group && S.group.code;
+    if (A.sb && A.user && code) {
+      try {
+        var r = await A.sb.from(GTABLE).delete().eq("group_code", code).eq("user_id", A.user.id);
+        if (r && r.error) throw new Error(r.error.message);
+      } catch (e) { A.gmsg = "Could not leave the group right now. Check your connection and try again."; render(); return; }
+    }
+    A.gmsg = null;
+    if (code) S.left = (S.left || []).concat([code]);
+    S.group = null; A.group = null; save(); render();
+  }
+  async function syncDown() {
+    if (!A.sb || !A.user) return;
+    A.lastPull = Date.now();
+    setStatus("syncing");
+    var uid = A.user.id;
+    try {
+      var r = await A.sb.from(TABLE).select("state, updated_at").eq("user_id", uid).maybeSingle();
+      if (r.error) { setStatus("error"); return; }
+      var local = (S.owner && S.owner !== uid) ? blank() : S;
+      var remote = r.data && r.data.state;
+      S = remote ? mergeState(local, remote) : local;
+      S.owner = uid;
+      saveLocal();
+      await push();
+      if (!P && !T && !SC) render();
+    } catch (e) { setStatus("error"); }
+  }
+  async function doSignOut(force) {
+    if (!A.sb) return;
+    if (!force && A.user) {
+      var ok = await push();
+      if (!ok) { A.signoutWarn = true; render(); return; }
+    }
+    try { await A.sb.auth.signOut(); } catch (e) {}
+    S = blank(); try { localStorage.removeItem(KEY); } catch (e) {}
+    A.user = null; A.signoutWarn = false; A.confirmDelete = false; A.msg = null; A.mode = "in";
+    P = null; T = null; SC = null; A.group = null; A.gmsg = null; view = "home"; setStatus("off"); render();
+  }
+  async function doDelete() {
+    try {
+      var r = await A.sb.rpc("delete_my_account");
+      if (r.error) { A.msg = { kind: "no", text: "Could not delete the account: " + r.error.message }; A.confirmDelete = false; render(); return; }
+    } catch (e) { A.msg = { kind: "no", text: "Could not reach the server. Try again when you are online." }; A.confirmDelete = false; render(); return; }
+    await doSignOut(true);
+  }
+  function errText(e) {
+    var m = (e && e.message) || "";
+    return /fetch|network|load failed/i.test(m) ? "Could not reach the server. Check your connection and try again." : (m || "Something went wrong. Try again.");
+  }
+  function authRedirect() { return location.origin + location.pathname; }
+  async function submitAuth(form) {
+    var fd = new FormData(form), email = (fd.get("email") || "").toString().trim(), pw = (fd.get("password") || "").toString();
+    A.email = email; A.msg = null;
+    var btn = form.querySelector("button[type=submit]"); if (btn) btn.disabled = true;
+    try {
+      if (A.mode === "reset") {
+        if (!email) { A.msg = { kind: "no", text: "Enter your email address." }; }
+        else {
+          var r0 = await A.sb.auth.resetPasswordForEmail(email, { redirectTo: authRedirect() });
+          A.msg = r0.error ? { kind: "no", text: errText(r0.error) } : { kind: "ok", text: "If that email has an account, a reset link is on its way." };
+        }
+      } else if (A.mode === "recovery") {
+        if (pw.length < 8) { A.msg = { kind: "no", text: "Use at least 8 characters." }; }
+        else {
+          var r1 = await A.sb.auth.updateUser({ password: pw });
+          if (r1.error) A.msg = { kind: "no", text: errText(r1.error) };
+          else { A.mode = "in"; A.msg = { kind: "ok", text: "Password updated." }; }
+        }
+      } else if (!email || pw.length < 8) {
+        A.msg = { kind: "no", text: !email ? "Enter your email address." : "Use a password with at least 8 characters." };
+      } else if (A.mode === "up") {
+        var r2 = await A.sb.auth.signUp({ email: email, password: pw, options: { emailRedirectTo: authRedirect() } });
+        if (r2.error) A.msg = { kind: "no", text: errText(r2.error) };
+        else if (r2.data && r2.data.user && r2.data.user.identities && r2.data.user.identities.length === 0) A.msg = { kind: "no", text: "That email already has an account. Try signing in." };
+        else if (!r2.data || !r2.data.session) { A.mode = "in"; A.msg = { kind: "info", text: "Check your email and confirm your address, then sign in." }; }
+      } else {
+        var r3 = await A.sb.auth.signInWithPassword({ email: email, password: pw });
+        if (r3.error) A.msg = { kind: "no", text: errText(r3.error) };
+      }
+    } catch (e) { A.msg = { kind: "no", text: "Could not reach the server. Check your connection and try again." }; }
+    render();
+  }
+  function initAuth() {
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !window.supabase || !window.supabase.createClient) return;
+    try { A.sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }); } catch (e) { return; }
+    render();
+    A.sb.auth.onAuthStateChange(function (event, session) {
+      setTimeout(function () {
+        var was = A.user && A.user.id;
+        A.user = session ? session.user : null;
+        if (event === "PASSWORD_RECOVERY") { A.mode = "recovery"; view = "account"; P = null; render(); return; }
+        if (!A.user) { if (A.mode === "recovery") A.mode = "in"; setStatus("off"); if (view === "account") render(); return; }
+        if (A.user.id !== was) { A.msg = null; syncDown(); if (view === "account") render(); }
+        else renderTrip();
+      }, 0);
+    });
+    window.addEventListener("online", function () { if (A.user && (A.status === "error" || A.status === "pending")) push(); });
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible" && A.user && Date.now() - A.lastPull > 60000) syncDown();
+    });
+  }
+  function accountView() {
+    if (!A.sb) return '<section class="panel"><div class="eyebrow">Cuenta</div><h2>Accounts are not set up</h2><p class="lede">This copy of the app keeps your progress on this device only.</p></section>';
+    var msg = A.msg ? '<div class="note ' + A.msg.kind + '">' + esc(A.msg.text) + '</div>' : "";
+    if (A.user && A.mode !== "recovery") {
+      var warn = A.signoutWarn ? '<div class="note no">Your latest progress has not synced yet. Signing out now will lose it on this device.</div><div class="row"><button class="btn danger" data-act="signout-force">Sign out anyway</button><button class="btn" data-act="syncnow">Try syncing again</button></div>' : "";
+      var del = A.confirmDelete
+        ? '<div class="note no">This permanently deletes your account and saved progress. It cannot be undone.</div><div class="row"><button class="btn danger solid" data-act="del-yes">Delete permanently</button><button class="btn" data-act="del-no">Cancel</button></div>'
+        : '<div class="row"><button class="btn quiet" data-act="del-ask">Delete my account</button></div>';
+      return '<section class="panel"><div class="eyebrow">Cuenta</div><h2>Sesión iniciada</h2>' +
+        '<p class="lede">' + esc(A.user.email || "") + '</p>' + msg +
+        '<p id="syncline"><span class="dot ' + A.status + '"></span>' + esc(STATUS_TEXT[A.status] || "") + '</p>' + warn +
+        '<div class="row"><button class="btn" data-act="syncnow">Sync now</button><button class="btn" data-act="signout">Sign out</button></div></section>' +
+        '<section class="panel"><h3>Zona de peligro</h3>' + del + '</section>';
+    }
+    var m = A.mode;
+    var title = m === "up" ? "Crea tu cuenta" : m === "reset" ? "Restablecer contraseña" : m === "recovery" ? "Nueva contraseña" : "Entra a tu cuenta";
+    var lede = m === "reset" ? "Enter your email and we will send a reset link." : m === "recovery" ? "Choose a new password for your account." : "An account saves your level, streak and flashcard progress so you can pick up on any device. Progress you already made on this device is kept and merged in.";
+    var seg = (m === "in" || m === "up") ? '<div class="seg" role="group" aria-label="Modo"><button data-amode="in" aria-pressed="' + (m === "in") + '">Entrar</button><button data-amode="up" aria-pressed="' + (m === "up") + '">Crear cuenta</button></div>' : "";
+    var emailField = m === "recovery" ? "" : '<div class="field"><label for="a-email">Email</label><input id="a-email" name="email" type="email" autocomplete="email" inputmode="email" value="' + esc(A.email) + '" required></div>';
+    var pwField = m === "reset" ? "" : '<div class="field"><label for="a-pass">' + (m === "recovery" ? "New password" : "Password") + '</label><input id="a-pass" name="password" type="password" autocomplete="' + (m === "in" ? "current-password" : "new-password") + '" minlength="8" required>' + (m === "in" ? "" : '<small>At least 8 characters.</small>') + '</div>';
+    var label = m === "up" ? "Crear cuenta" : m === "reset" ? "Send reset link" : m === "recovery" ? "Save password" : "Entrar";
+    var links = m === "in" ? '<button type="button" class="btn quiet" data-amode="reset">Forgot your password?</button>' : (m === "reset" ? '<button type="button" class="btn quiet" data-amode="in">Back to sign in</button>' : "");
+    return '<section class="panel"><div class="eyebrow">Cuenta</div><h2>' + title + '</h2><p class="lede">' + lede + '</p>' + seg + msg +
+      '<form data-form="auth" novalidate>' + emailField + pwField + '<div class="row"><button class="btn primary" type="submit">' + label + '</button>' + links + '</div></form></section>';
+  }
+
+  /* ---------- Speaking practice ---------- */
+  function norm(s) {
+    return String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
+      .replace(/\([^)]*\)/g, " ").replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+  }
+  function lev(a, b) {
+    var m = a.length, n = b.length, i, j, prev = [], cur;
+    for (j = 0; j <= n; j++) prev[j] = j;
+    for (i = 1; i <= m; i++) {
+      cur = [i];
+      for (j = 1; j <= n; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      prev = cur;
+    }
+    return prev[n];
+  }
+  function sim(a, b) { a = norm(a); b = norm(b); var L = Math.max(a.length, b.length); return L ? 1 - lev(a, b) / L : 0; }
+  function targets(t) { return t.split("/").map(function (x) { return x.replace(/\.\.\./g, "").replace(/_{2,}/g, " ").trim(); }).filter(Boolean); }
+  function scoreSpeech(target, heard) {
+    var best = { s: 0, t: target };
+    targets(target).forEach(function (t) { heard.forEach(function (h) { var s = sim(t, h); if (s > best.s) best = { s: s, t: t, h: h }; }); });
+    var missed = [];
+    if (best.h !== undefined) {
+      var have = norm(best.h).split(" ");
+      norm(best.t).split(" ").forEach(function (w) { if (w && have.indexOf(w) < 0) missed.push(w); });
+    }
+    return { score: best.s, missed: missed, heard: best.h !== undefined ? best.h : (heard[0] || "") };
+  }
+  var PASS = 0.85, CLOSE = 0.6;
+  var rec = null, spLang = null, spRetried = false;
+  function stopRec() { var r = rec; rec = null; try { if (r) r.abort(); } catch (e) {} }
+  function resetSp() { P.sp = { tries: 0, passed: false, graded: false, heard: null, score: 0, missed: [], listening: false, err: null, revealed: false }; }
+  function spTarget() {
+    var c = cardR(P.deck, P.queue[P.pos]);
+    return P.spMode === "read" ? (c[2] || c[0]) : c[0];
+  }
+  var SP_ERR = {
+    "not-allowed": "The microphone is blocked. Allow it for this site in your browser settings, then try again.",
+    "service-not-allowed": "Speech recognition is not allowed here. Check your browser's microphone and dictation settings.",
+    "no-speech": "I did not hear anything. Tap Hablar and speak right after it starts listening.",
+    "audio-capture": "No microphone was found.",
+    "network": "Speech recognition needs an internet connection.",
+    "language-not-supported": "This browser has no recognizer for that Spanish variant."
+  };
+  /* One recognition attempt. done(err, alternatives) is called exactly once unless the attempt is aborted. */
+  function recognize(done) {
+    if (!SR) { done("audio-capture"); return; }
+    stopRec();
+    var me = new SR(), fin = false;
+    rec = me;
+    me.lang = spLang || COUNTRIES[C()].lang;
+    me.interimResults = false; me.continuous = false; me.maxAlternatives = 5;
+    function end(err, alts) { if (fin) return; fin = true; if (rec === me) rec = null; done(err, alts); }
+    me.onresult = function (e) {
+      if (rec !== me) return;
+      var alts = [];
+      for (var i = 0; i < e.results[0].length; i++) alts.push(e.results[0][i].transcript);
+      end(null, alts);
+    };
+    me.onerror = function (e) {
+      if (rec !== me) return;
+      if (e.error === "language-not-supported" && !spRetried) { spRetried = true; spLang = "es-US"; fin = true; rec = null; recognize(done); return; }
+      end(e.error || "unknown");
+    };
+    me.onend = function () { if (rec !== me) return; end("no-speech"); };
+    try { me.start(); } catch (e) { end("audio-capture"); }
+  }
+  function listen() {
+    if (!SR || !P || !P.sp) return;
+    var sp = P.sp;
+    sp.listening = true; sp.err = null; render();
+    recognize(function (err, alts) {
+      if (!P || P.sp !== sp) return;
+      sp.listening = false;
+      if (err) { sp.err = err; render(); return; }
+      var r = scoreSpeech(spTarget(), alts);
+      sp.tries += 1; sp.heard = r.heard; sp.score = r.score; sp.missed = r.missed;
+      if (r.score >= PASS && !sp.passed) { sp.passed = true; P.right += 1; if (!sp.graded) { sp.graded = true; gradeP(P.queue[P.pos], true); } }
+      render();
+    });
+  }
+
+  /* ---------- Views ---------- */
+  var deferredInstall = null;
+  window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); deferredInstall = e; renderTrip(); });
+  window.addEventListener("appinstalled", function () { deferredInstall = null; renderTrip(); });
+  if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0) {
+    window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });
+  }
+  var view = "home";
+  var T = null;   // placement quiz session
+  var P = null;   // study session
+  var SC = null;  // scene session
+  var OB = { pick: false };
+  var PB = { q: "", fav: false, list: [] };
+  var HOME = { editDate: false };
+  var SHOW = null;
+
+  var LEVEL_PLAIN = {
+    A1: ["Just starting", "I know a few words and phrases."],
+    A2: ["The basics", "I can order food and ask simple questions."],
+    B1: ["Conversational", "I can chat about everyday things, with mistakes."],
+    B2: ["Comfortable", "I follow most conversations and want local wording."]
+  };
+  var ICONS = {
+    home: '<path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/>',
+    phrases: '<path d="M4 5h16v11H10l-5 4v-4H4z"/>',
+    scenes: '<path d="M3 6h11v7H8l-3 3v-3H3z"/><path d="M10 17h6l3 3v-3h2v-7h-5"/>',
+    study: '<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 10h16"/>',
+    progress: '<path d="M5 20V11M12 20V5M19 20v-7"/>'
+  };
+  function needsOnb() { return !S.country || !S.placement; }
+  function deckById(id) { return DECKS.filter(function (d) { return d.id === id; })[0]; }
+  function daysLeft() { return S.tripDate ? dayNum(S.tripDate) - dayNum(today()) : null; }
+  function fmtDate(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" }); }
+  function blanks(h) { return h.replace(/_{3,}/g, '<span class="blank"></span>'); }
+
+  function renderNav() {
+    var items = [["home", "Inicio"], ["phrases", "Frases"], ["scenes", "Escenas"], ["study", "Estudiar"], ["progress", "Progreso"]];
+    $("nav").innerHTML = items.map(function (it) {
+      var on = view === it[0] || (it[0] === "home" && view === "level");
+      return '<button data-go="' + it[0] + '"' + (on ? ' aria-current="page"' : "") + '><svg viewBox="0 0 24 24" aria-hidden="true">' + ICONS[it[0]] + '</svg>' + it[1] + '</button>';
+    }).join("");
+  }
+
+  /* ----- welcome and level ----- */
+  function levelButtons() {
+    return '<div class="bigs">' + LEVELS.map(function (l) {
+      return '<button class="big" data-level="' + l + '"><span class="tag">' + l + '</span><b>' + LEVEL_PLAIN[l][0] + '</b><span>' + LEVEL_PLAIN[l][1] + '</span></button>';
+    }).join("") + '</div>';
+  }
+  function onboardView() {
+    if (!S.country) {
+      return '<section class="welcome"><div class="mark" aria-hidden="true">Ñ</div><h1>Rumbo Español</h1>' +
+        '<p class="lede">Conversational Spanish for your trip. Where are you headed?</p>' +
+        '<div class="bigs">' + Object.keys(COUNTRIES).map(function (k) {
+          return '<button class="big" data-country="' + k + '"><b>' + COUNTRIES[k].name + '</b><span>Spanish the way locals say it in ' + COUNTRIES[k].name + '</span></button>';
+        }).join("") + '</div>' + (A.sb && !A.user ? '<button class="btn quiet" data-go="account">Already have an account? Sign in</button>' : "") + '</section>';
+    }
+    if (OB.pick) {
+      return '<section class="welcome"><h1>Choose your level</h1><p class="lede">Pick the one that sounds most like you. You can change it any time.</p>' + levelButtons() +
+        '<button class="btn quiet" data-act="ob-back">Back</button></section>';
+    }
+    return '<section class="welcome"><h1>¿Cómo está tu español?</h1><p class="lede">How is your Spanish? This sets where you start.</p>' +
+      '<div class="bigs"><button class="big" data-act="ob-pick"><b>Choose my level</b><span>I know where I am</span></button>' +
+      '<button class="big" data-act="ob-quiz"><b>Take a 5-question quiz</b><span>About a minute</span></button></div>' +
+      '<button class="btn quiet" data-act="ob-country">Change destination</button></section>';
+  }
+  function levelView() {
+    return '<section class="welcome"><h1>Choose your level</h1><p class="lede">Pick the one that sounds most like you.</p>' + levelButtons() +
+      '<div class="row" style="justify-content:center"><button class="btn" data-act="start-test">Take the 5-question quiz instead</button><button class="btn quiet" data-act="level-back">Cancel</button></div></section>';
+  }
+
+  /* ----- home ----- */
+  function phraseRefs() {
+    var out = [];
+    visibleDecks().forEach(function (d) { if (d.kind === "phrase") d.cards.forEach(function (_, i) { out.push({ deck: d, i: i }); }); });
+    return out;
+  }
+  function planReview() {
+    var due = [], fresh = [];
+    phraseRefs().forEach(function (r) { var c = cardState(r.deck, r.i); if (!c.seen) fresh.push(r); else if (isDue(c)) due.push(r); });
+    var dl = daysLeft();
+    var cap = dl !== null && dl > 0 ? Math.min(10, Math.max(3, Math.ceil(fresh.length / dl))) : 5;
+    return { refs: due.slice(0, 12).concat(fresh.slice(0, cap)), due: due.length, fresh: fresh.length };
+  }
+  function learnedPhrases() { var n = 0; phraseRefs().forEach(function (r) { if (cardState(r.deck, r.i).box >= 2) n++; }); return n; }
+  function nextScene() {
+    var undone = SCENES.filter(function (s) { return !S.scenes[s.id]; });
+    if (undone.length) return undone[0];
+    return SCENES.slice().sort(function (a, b) { return (S.scenes[a.id].t || 0) - (S.scenes[b.id].t || 0); })[0];
+  }
+  function planSteps() {
+    var rv = planReview(), d = S.daily[today()] || {}, steps = [];
+    var n = rv.refs.length;
+    steps.push({ key: "review", title: "Frases del día", sub: n ? n + " phrases to learn and review" : "All caught up. Practice a few anyway.", done: !!d.review || n === 0 });
+    var sc = nextScene();
+    steps.push({ key: "scene", title: "Escena: " + sc.title, sub: sc.sub, done: !!d.scene, scene: sc.id });
+    if (SR) steps.push({ key: "speak", title: "Dilo en voz alta", sub: "Say four phrases out loud", done: !!d.speak });
+    return steps;
+  }
+  function planDone(step) {
+    var k = today(); S.daily[k] = S.daily[k] || {};
+    if (!S.daily[k][step]) { S.daily[k][step] = 1; touchStreak(); save(); }
+  }
+  function inviteLink() {
+    var p = [];
+    if (S.country) p.push("c=" + S.country);
+    if (S.tripDate) p.push("d=" + S.tripDate);
+    if (S.group && S.group.code) p.push("g=" + S.group.code);
+    return location.origin + location.pathname + (p.length ? "?" + p.join("&") : "");
+  }
+  function groupPanel() {
+    if (!A.sb) return "";
+    if (!S.group) return '<div class="note info">Want to see who is practicing? <button class="btn quiet inl" data-act="group-start">Add a group leaderboard</button></div>';
+    if (!A.user) return '<div class="note info">The group leaderboard is on for this trip. <button class="btn quiet inl" data-go="account">Sign in or create an account</button> to join it.</div>';
+    if (!S.group.name) {
+      return '<form data-form="join"><div class="field"><label for="g-name">What should the group call you?</label><input id="g-name" name="name" maxlength="24" autocomplete="nickname" required></div>' +
+        '<div><button class="btn primary" type="submit">Join the group</button></div></form>';
+    }
+    var rows = A.group && A.group.rows ? A.group.rows.slice().sort(function (a, b) { return (b.learned - a.learned) || (b.streak - a.streak); }) : null;
+    var list = rows ? (rows.length ? '<ul class="list">' + rows.map(function (r) {
+      var me = A.user && r.user_id === A.user.id;
+      return '<li><span><b>' + esc(r.display_name) + '</b>' + (me ? ' <span class="tag">tú</span>' : "") + '</span><span class="mono">' + r.learned + ' phrases · ' + r.week_days + '/7 days</span></li>';
+    }).join("") + '</ul>' : '<p class="lede">Nobody has joined yet.</p>') : '<p class="lede">' + (A.group && A.group.err ? "Could not load the group right now." : "Loading the group…") + '</p>';
+    return (A.gmsg ? '<div class="note no">' + esc(A.gmsg) + '</div>' : "") + '<h3>Los muchachos</h3>' + list + '<div class="row"><button class="btn" data-act="group-refresh">Refresh</button><button class="btn quiet" data-act="group-leave">Leave the group</button></div>';
+  }
+  function homeView() {
+    var c = COUNTRIES[C()], dl = daysLeft(), pl = S.placement;
+    var dateForm = '<form data-form="date"><div class="field"><label for="trip-date">When do you leave?</label><input id="trip-date" name="date" type="date" value="' + esc(S.tripDate || "") + '"></div>' +
+      '<div class="row"><button class="btn primary" type="submit">Save date</button>' + (S.tripDate ? '<button type="button" class="btn quiet" data-act="cancel-date">Cancel</button>' : "") + '</div></form>';
+    var hero;
+    if (S.tripDate && dl !== null && dl >= 0 && !HOME.editDate) {
+      hero = '<div class="eyebrow">Tu viaje · ' + c.name + '</div><h1>' + (dl === 0 ? "Hoy es el día." : dl === 1 ? "Mañana viajas." : "Faltan " + dl + " días.") + '</h1>' +
+        '<p class="lede">Leaving ' + esc(fmtDate(S.tripDate)) + '. <button class="btn quiet inl" data-act="edit-date">Change date</button></p>';
+    } else if (S.tripDate && dl < 0 && !HOME.editDate) {
+      hero = '<div class="eyebrow">Tu viaje · ' + c.name + '</div><h1>Tu viaje fue hace ' + (-dl) + (dl === -1 ? " día." : " días.") + '</h1>' +
+        '<p class="lede">Planning another trip? <button class="btn quiet inl" data-act="edit-date">Set a new date</button></p>';
+    } else {
+      hero = '<div class="eyebrow">Tu viaje · ' + c.name + '</div><h1>Rumbo a ' + c.name + '.</h1>' +
+        '<p class="lede">Add your departure date for a countdown and a daily plan that fits the time you have.</p>' + dateForm;
+    }
+    var steps = planSteps(), done = steps.filter(function (s) { return s.done; }).length;
+    var rows = steps.map(function (s) {
+      return '<li class="step' + (s.done ? " done" : "") + '"><span class="chk" aria-hidden="true"></span><div class="stx"><b>' + esc(s.title) + '</b><span>' + esc(s.sub) + '</span></div>' +
+        '<button class="btn' + (s.done ? "" : " primary") + '" data-act="plan" data-step="' + s.key + '"' + (s.scene ? ' data-scene-id="' + s.scene + '"' : "") + '>' + (s.done ? "Otra vez" : "Empezar") + '</button></li>';
+    }).join("");
+    var total = phraseRefs().length, learned = learnedPhrases();
+    var link = inviteLink();
+    var level = '<div class="levelrow"><span><span class="tag">' + pl.level + '</span> ' + LEVEL_PLAIN[pl.level][0] + '</span><button class="btn quiet inl" data-go="level">Change level</button></div>';
+    return '<section class="panel">' + hero + '</section>' +
+      '<section class="panel"><div class="row between"><h2>Hoy</h2><span class="eyebrow">' + done + ' de ' + steps.length + ' hechos</span></div><ul class="plan">' + rows + '</ul>' +
+      '<div><div class="bar-m" aria-hidden="true"><i style="width:' + Math.round(learned / Math.max(1, total) * 100) + '%"></i></div><p class="s mono" style="margin-top:6px">' + learned + ' of ' + total + ' trip phrases learned · ' + S.streak + '-day streak</p></div>' +
+      '<div class="row"><button class="btn" data-go="phrases">Open the phrasebook</button>' + level.replace('class="levelrow"', 'class="levelrow inline"') + '</div></section>' +
+      '<section class="panel"><h2>Invita a los muchachos</h2><p class="lede">Send this link. It opens the app set to ' + c.name + (S.tripDate ? " with your trip date" : "") + '.</p>' +
+      '<div class="field"><label for="invite-url" class="sr">Invite link</label><input id="invite-url" type="text" readonly value="' + esc(link) + '"></div>' +
+      '<div class="row"><button class="btn primary" data-act="copy-link">Copy link</button>' + (navigator.share ? '<button class="btn" data-act="share-link">Share</button>' : "") + '</div>' +
+      groupPanel() + '</section>' + tripNotes();
+  }
+
+  function deckBtn(d) {
+    var m = mastered(d), n = d.cards.length, due = dueCount(d);
+    var mine = S.placement && S.placement.level === d.lv;
+    var tag = d.kind === "phrase" ? "TRIP" : d.lv;
+    return '<button class="deck' + (mine ? " mine" : "") + '" data-deck="' + d.id + '">' +
+      '<span class="tag' + (mine ? " sun" : "") + '">' + tag + (d.country ? " · " + COUNTRIES[d.country].code : "") + (mine ? " · tu nivel" : "") + '</span>' +
+      '<span class="t">' + d.title + '</span><span class="s">' + d.sub + '</span>' +
+      '<span class="bar-m" aria-hidden="true"><i style="width:' + Math.round(m / n * 100) + '%"></i></span>' +
+      '<span class="s mono">' + m + '/' + n + ' learned · ' + due + ' due</span></button>';
+  }
+
+  /* ----- placement quiz: five adaptive questions ----- */
+  function newQuestion() {
+    var lv = LEVELS[T.idx];
+    var pool = BANK[lv].map(function (_, i) { return i; }).filter(function (i) { return !T.used[lv + i]; });
+    var qi = pool[Math.floor(Math.random() * pool.length)];
+    T.used[lv + qi] = 1;
+    var q = BANK[lv][qi];
+    T.cur = { lv: lv, q: q, opts: shuffle(q.o.map(function (t, i) { return { t: t, ok: i === q.a }; })), picked: null };
+  }
+  function startTest() {
+    T = { n: 0, idx: 1, marks: [], used: {}, cur: null, done: null };
+    view = "test"; newQuestion(); render();
+  }
+  function testView() {
+    if (!T) return '<section class="welcome"><h1>Quiz de 5 preguntas</h1><p class="lede">Five questions that get harder or easier as you answer. It takes about a minute.</p><div class="row" style="justify-content:center"><button class="btn primary" data-act="start-test">Begin</button></div></section>';
+    if (T.done) return resultView();
+    var c = T.cur, q = c.q, answered = c.picked !== null;
+    var meter = [0, 1, 2, 3, 4].map(function (k) {
+      var m = T.marks[k];
+      return '<i class="' + (m === 1 ? "ok" : m === 0 ? "no" : k === T.n ? "on" : "") + '"></i>';
+    }).join("");
+    var opts = c.opts.map(function (o, i) {
+      var cls = answered ? (o.ok ? " right" : (c.picked === i ? " wrong" : "")) : "";
+      return '<button class="opt' + cls + '" data-opt="' + i + '"' + (answered ? " disabled" : "") + '><span class="k">' + "ABCD"[i] + '</span><span>' + esc(o.t) + '</span></button>';
+    }).join("");
+    var fb;
+    if (answered) {
+      var good = c.picked >= 0 && c.opts[c.picked].ok;
+      fb = '<div class="note ' + (good ? "ok" : "no") + '"><b>' + (good ? "Correcto. " : (c.picked === -1 ? "Sin problema. " : "Casi. ")) + '</b>' + esc(q.why) + '</div>' +
+        '<div class="row"><button class="btn primary" data-act="next-q">' + (T.n === 4 ? "See my level" : "Continue") + '</button></div>';
+    } else fb = '<div class="row"><button class="btn quiet" data-opt="-1">No sé</button></div>';
+    return '<section class="panel"><div class="row between"><span class="eyebrow">Pregunta ' + (T.n + 1) + ' de 5</span><button class="btn quiet inl" data-act="quiz-exit">Salir</button></div>' +
+      '<div class="meter" aria-hidden="true">' + meter + '</div><div class="qprompt">' + esc(q.q) + '</div><div class="opts">' + opts + '</div>' + fb + '</section>';
+  }
+  function answer(i) {
+    var c = T.cur; if (c.picked !== null) return;
+    c.picked = i;
+    T.marks[T.n] = (i >= 0 && c.opts[i].ok) ? 1 : 0;
+    touchStreak(); save(); render();
+  }
+  function nextQ() {
+    var good = T.marks[T.n] === 1;
+    T.idx = good ? Math.min(3, T.idx + 1) : Math.max(0, T.idx - 1);
+    T.n += 1;
+    if (T.n < 5) { newQuestion(); render(); return; }
+    var placed = LEVELS[T.idx], right = T.marks.reduce(function (a, b) { return a + b; }, 0);
+    T.done = { level: placed, right: right };
+    S.placement = { level: placed, fresh: placed === "A1" && right <= 1, date: today(), scores: T.marks.slice(), t: Date.now(), via: "quiz" };
+    S.history.push({ level: placed, date: today(), scores: T.marks.slice() });
+    save(); render();
+  }
+  function resultView() {
+    var lv = T.done.level;
+    return '<section class="welcome"><div class="eyebrow">Tu nivel</div><h1>Empiezas en ' + lv + '.</h1>' + ladder(lv) +
+      '<p class="lede"><b>' + LEVEL_PLAIN[lv][0] + ".</b> " + LEVEL_PLAIN[lv][1] + ' A five-question quiz is a rough guide, so change it if it feels off.</p>' +
+      '<div class="row" style="justify-content:center"><button class="btn primary" data-act="test-done">Continue</button><button class="btn quiet" data-act="test-pick">Pick a different level</button></div></section>';
+  }
+
+  /* ----- phrasebook ----- */
+  function isFav(key) { return S.favs.indexOf(key) >= 0; }
+  function pbBody() {
+    var needle = norm(PB.q), html = "", list = [];
+    visibleDecks().forEach(function (d) {
+      if (d.kind !== "phrase") return;
+      var items = "";
+      d.cards.forEach(function (_, i) {
+        var key = d.id + ":" + i, r = cardR(d, i);
+        if (PB.fav && !isFav(key)) return;
+        if (needle && norm(r[0] + " " + r[1]).indexOf(needle) < 0) return;
+        var pos = list.length; list.push({ d: d.id, i: i });
+        items += '<div class="prow"><button class="pshow" data-show="' + pos + '"><span class="pes">' + blanks(esc(r[0])) + '</span><span class="pen">' + blanks(esc(r[1])) + '</span></button>' +
+          '<button class="star" data-fav="' + key + '" aria-pressed="' + isFav(key) + '" aria-label="Favorita"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9L3.5 9.7l5.9-.8z"/></svg></button></div>';
+      });
+      if (items) html += '<h3 class="pcat">' + d.title + '</h3>' + items;
+    });
+    PB.list = list;
+    return html || '<p class="lede">' + (PB.fav ? "No favorites yet. Tap the star on a phrase to keep it here." : "No phrases match that search.") + '</p>';
+  }
+  function phrasesView() {
+    var c = COUNTRIES[C()], favN = S.favs.filter(function (k) { return !!deckById(k.split(":")[0]); }).length;
+    return '<section class="panel"><div class="eyebrow">Frases · ' + c.name + '</div><h2>Say it, or show it.</h2>' +
+      '<p class="lede">Tap any phrase to fill the screen and hold your phone up. Wording is set for ' + c.name + '. It works offline once installed.</p>' +
+      '<div class="field"><label for="pb-search" class="sr">Search phrases</label><input id="pb-search" type="search" placeholder="Search in English or Spanish" value="' + esc(PB.q) + '" autocomplete="off"></div>' +
+      '<div class="row"><button class="chip" data-pbfav="0" aria-pressed="' + !PB.fav + '">Todas</button><button class="chip" data-pbfav="1" aria-pressed="' + PB.fav + '">Favoritas (' + favN + ')</button></div></section>' +
+      '<section class="panel" id="pb-list">' + pbBody() + '</section>';
+  }
+  function openShow(pos) { SHOW = { pos: pos }; renderShow(); }
+  function renderShow() {
+    var el = $("show");
+    if (!SHOW) { el.hidden = true; el.innerHTML = ""; document.body.classList.remove("noscroll"); return; }
+    var r = PB.list[SHOW.pos]; if (!r) { SHOW = null; renderShow(); return; }
+    var c = cardR(deckById(r.d), r.i), n = PB.list.length;
+    el.innerHTML = '<div class="show-top"><button class="show-btn" data-act="show-close" id="show-close">Cerrar</button><span class="mono">' + (SHOW.pos + 1) + ' / ' + n + '</span></div>' +
+      '<div class="show-body"><div class="show-es">' + blanks(esc(c[0])) + '</div><div class="show-en">' + blanks(esc(c[1])) + '</div></div>' +
+      '<div class="show-bar"><button class="show-btn" data-act="show-prev"' + (SHOW.pos === 0 ? " disabled" : "") + '>Anterior</button>' +
+      (canSpeak ? '<button class="show-btn solid" data-act="show-say">Escuchar</button>' : "") +
+      '<button class="show-btn" data-act="show-next"' + (SHOW.pos >= n - 1 ? " disabled" : "") + '>Siguiente</button></div>';
+    el.hidden = false; document.body.classList.add("noscroll");
+    var cb = $("show-close"); if (cb) cb.focus();
+  }
+
+  /* ----- scenes ----- */
+  function askOpts(a) { var o = a.opts; return Array.isArray(o) ? o : (o[C()] || o.any || o.mx); }
+  function beginTurn() {
+    var t = SC.scene.turns[SC.ti];
+    SC.ask = t.ask ? { opts: shuffle(askOpts(t.ask).map(function (x, i) { return { t: x, ok: i === t.ask.a, wrong: false }; })), done: false, tries: 0 } : null;
+    SC.you = t.you ? { opts: shuffle(t.you.opts.map(function (o) { return { es: R(o.es), ok: !!o.ok, why: o.why, wrong: false }; })), done: false, tries: 0, picked: -1 } : null;
+    SC.showEn = false; SC.revealed = false; SC.sp = null;
+    SC.total += (t.ask ? 1 : 0) + (t.you ? 1 : 0);
+  }
+  function npcText(t) { return R(t.npc.es); }
+  function startScene(id, fromPlan) {
+    var scene = SCENES.filter(function (s) { return s.id === id; })[0]; if (!scene) return;
+    stopRec();
+    SC = { scene: scene, ti: 0, points: 0, total: 0, fromPlan: !!fromPlan, done: false };
+    beginTurn(); view = "scenes"; render();
+    say(npcText(scene.turns[0]));
+  }
+  function finishScene() {
+    var pct = SC.total ? Math.round(100 * SC.points / SC.total) : 100, prev = S.scenes[SC.scene.id] || {};
+    S.scenes[SC.scene.id] = { best: Math.max(prev.best || 0, pct), t: Date.now() };
+    SC.done = true; SC.pct = pct;
+    touchStreak(); save();
+    if (SC.fromPlan) planDone("scene");
+  }
+  function scenesView() {
+    if (SC) return sceneView();
+    var c = COUNTRIES[C()];
+    return '<section class="panel"><div class="eyebrow">Escenas · ' + c.name + '</div><h2>Practice the real conversation.</h2>' +
+      '<p class="lede">You hear what a local says, answer a quick question about it, then choose what you would say back. Prices and wording are set for ' + c.name + '.</p>' +
+      '<div class="decks">' + SCENES.map(function (s) {
+        var st = S.scenes[s.id];
+        return '<button class="deck" data-scene="' + s.id + '"><span class="tag' + (st ? " sun" : "") + '">' + (st ? "ESCENA · " + st.best + "%" : "ESCENA") + '</span><span class="t">' + s.title + '</span><span class="s">' + s.sub + '</span><span class="s mono">' + s.turns.length + ' turns</span></button>';
+      }).join("") + '</div></section>';
+  }
+  function sceneView() {
+    var sc = SC.scene, head = '<div class="row between"><button class="btn quiet" data-act="sc-leave">' + (SC.fromPlan ? "Back" : "All scenes") + '</button><span class="eyebrow">' + (SC.done ? "Fin" : "Turno " + (SC.ti + 1) + " de " + sc.turns.length) + '</span></div><div><h2>' + sc.title + '</h2><p class="lede">' + sc.sub + '</p></div>';
+    if (SC.done) {
+      return '<section class="panel">' + head + '<div class="eyebrow">Escena completa</div><h2>' + SC.points + ' de ' + SC.total + ' a la primera</h2>' +
+        '<div class="bar-m" aria-hidden="true"><i style="width:' + SC.pct + '%"></i></div>' +
+        '<p class="lede">' + (SC.pct >= 80 ? "Strong. You are ready for this one." : "Run it again. The wording sticks on the second pass.") + '</p>' +
+        '<div class="row"><button class="btn primary" data-scene="' + sc.id + '">Repetir</button><button class="btn" data-act="sc-leave">' + (SC.fromPlan ? "Volver al inicio" : "Otra escena") + '</button></div></section>';
+    }
+    var t = sc.turns[SC.ti], hide = !!S.hideText && !SC.revealed;
+    var meter = sc.turns.map(function (_, k) { return '<i class="' + (k < SC.ti ? "ok" : k === SC.ti ? "on" : "") + '"></i>'; }).join("");
+    var en = t.npc.en ? R(t.npc.en) : "";
+    var bubble = '<div class="bubble them"><div class="eyebrow">Escuchas</div>' +
+      (hide ? '<div class="btext hid">• • •</div>' : '<div class="btext">' + esc(npcText(t)) + '</div>') +
+      (SC.showEn && en ? '<div class="ben">' + esc(en) + '</div>' : "") +
+      '<div class="row">' + (canSpeak ? '<button class="btn" data-act="sc-say">Escuchar</button>' : "") +
+      (hide ? '<button class="btn" data-act="sc-reveal">Mostrar texto</button>' : "") +
+      (en ? '<button class="btn quiet" data-act="sc-en">' + (SC.showEn ? "Hide translation" : "Translate") + '</button>' : "") + '</div></div>';
+    var ask = "";
+    if (SC.ask) {
+      ask = '<div class="eyebrow">¿Qué dijo?</div><div class="qprompt" style="font-size:1.25rem">' + esc(t.ask.q) + '</div><div class="opts">' + SC.ask.opts.map(function (o, i) {
+        var cls = SC.ask.done ? (o.ok ? " right" : "") : (o.wrong ? " wrong" : "");
+        return '<button class="opt' + cls + '" data-sc-ask="' + i + '"' + (SC.ask.done || o.wrong ? " disabled" : "") + '><span class="k">' + "ABCD"[i] + '</span><span>' + esc(o.t) + '</span></button>';
+      }).join("") + '</div>' + (SC.ask.done ? '<div class="note ok"><b>Correcto.</b> ' + (SC.ask.tries ? "" : "First try.") + '</div>' : "");
+    }
+    var you = "", askOk = !SC.ask || SC.ask.done;
+    if (SC.you && askOk) {
+      var y = SC.you;
+      you = '<div class="eyebrow">Tu turno</div><div class="qprompt" style="font-size:1.25rem">' + esc(t.you.intent) + '</div><div class="opts">' + y.opts.map(function (o, i) {
+        var cls = y.done ? (i === y.picked ? " right" : "") : (o.wrong ? " wrong" : "");
+        return '<button class="opt' + cls + '" data-sc-you="' + i + '"' + (y.done || o.wrong ? " disabled" : "") + '><span class="k">' + "ABCD"[i] + '</span><span>' + esc(o.es) + '</span></button>';
+      }).join("") + '</div>';
+      var wrongOpt = y.opts.filter(function (o) { return o.wrong; });
+      if (!y.done && wrongOpt.length) you += '<div class="note no"><b>Casi.</b> ' + esc(wrongOpt[wrongOpt.length - 1].why) + '</div>';
+      if (y.done) {
+        var best = y.opts[y.picked], sp = SC.sp, spn = "";
+        if (sp) {
+          if (sp.err) spn = '<div class="note no">' + esc(SP_ERR[sp.err] || "Speech recognition stopped.") + '</div>';
+          else if (sp.heard !== null) spn = '<div class="note ' + (sp.score >= PASS ? "ok" : sp.score >= CLOSE ? "info" : "no") + '"><b>' + (sp.score >= PASS ? "Muy bien. " : sp.score >= CLOSE ? "Casi. " : "Otra vez. ") + '</b>Heard: “' + esc(sp.heard) + '”</div>';
+        }
+        you += '<div class="note ok"><b>Correcto.</b> ' + esc(best.why) + '</div>' + spn +
+          '<div class="row">' + (SR ? '<button class="btn' + (sp && sp.listening ? " mic live" : "") + '" data-act="sc-speak">' + (sp && sp.listening ? "Escuchando…" : "Dilo en voz alta") + '</button>' : "") +
+          (canSpeak ? '<button class="btn" data-act="sc-say-you">Escuchar</button>' : "") +
+          '<button class="btn primary" data-act="sc-next">' + (SC.ti === sc.turns.length - 1 ? "Terminar" : "Continuar") + '</button></div>';
+      }
+    } else if (!SC.you && askOk) {
+      you = '<div class="row"><button class="btn primary" data-act="sc-next">' + (SC.ti === sc.turns.length - 1 ? "Terminar" : "Continuar") + '</button></div>';
+    }
+    return '<section class="panel">' + head + '<div class="meter" aria-hidden="true">' + meter + '</div>' +
+      '<div class="row"><button class="chip" data-act="sc-hide" aria-pressed="' + !!S.hideText + '">Modo oído: ocultar texto</button></div>' + bubble + ask + you + '</section>';
+  }
+
+  /* ----- study ----- */
+  function studyView() {
+    if (P) return sessionView();
+    var tripDecks = visibleDecks().filter(function (d) { return d.kind === "phrase"; });
+    var groups = '<div class="group"><h3 class="mono" style="font-size:.95rem">Trip Pack · frases del viaje</h3><div class="decks">' + tripDecks.map(deckBtn).join("") + '</div></div>' +
+      LEVELS.map(function (l) {
+        var ds = visibleDecks().filter(function (d) { return d.kind !== "phrase" && d.lv === l; });
+        if (!ds.length) return "";
+        return '<div class="group"><h3 class="mono" style="font-size:.95rem">' + l + ' · ' + LEVEL_NAMES[l] + '</h3><div class="decks">' + ds.map(deckBtn).join("") + '</div></div>';
+      }).join("");
+    var banner = SR ? "" : '<div class="note info">Speaking practice needs a browser with speech recognition, such as Chrome, Edge or Safari.</div>';
+    return '<section class="panel"><div class="eyebrow">Estudiar</div><h2>Elige un mazo</h2>' + banner + groups + '</section>';
+  }
+  function openDeck(id, mode, practiceAll, synth) {
+    var deck = synth || deckById(id); if (!deck) return;
+    var idx = deck.cards.map(function (_, i) { return i; });
+    var due = idx.filter(function (i) { return practiceAll || isDue(cardState(deck, i)); });
+    stopRec();
+    if (mode === "speak") due = due.filter(function (i) { var c = cardR(deck, i); return !/\d|_{2,}/.test(c[0] + c[2]); });
+    P = { deck: deck, mode: mode || "flash", queue: shuffle(due), pos: 0, flipped: false, right: 0, total: due.length, all: !!practiceAll, q: null, picked: null,
+      spMode: (P && P.spMode) || "recall", sp: null, synth: synth || null, back: synth ? "home" : null, planStep: synth ? synth.step : null, marked: false };
+    resetSp();
+    if (P.mode === "quiz") buildQuiz();
+    view = synth ? "study" : "study"; render();
+  }
+  function openSynth(spec, mode) {
+    openDeck(null, mode, true, { id: spec.id, lv: "TRIP", kind: "plan", title: spec.title, sub: spec.sub, step: spec.step, refs: spec.refs, cards: spec.refs.map(function (r) { return r.deck.cards[r.i]; }) });
+  }
+  function gradeP(i, ok) {
+    var r = P.deck.refs ? P.deck.refs[i] : { deck: P.deck, i: i };
+    grade(r.deck, r.i, ok);
+  }
+  function buildQuiz() {
+    if (P.pos >= P.queue.length) { P.q = null; return; }
+    var i = P.queue[P.pos], deck = P.deck;
+    var others = shuffle(deck.cards.map(function (_, k) { return k; }).filter(function (k) { return k !== i && deck.cards[k][1] !== deck.cards[i][1]; })).slice(0, 3);
+    var opts = shuffle([i].concat(others)).map(function (k) { return { t: deck.cards[k][1], ok: k === i }; });
+    P.q = { i: i, opts: opts }; P.picked = null;
+  }
+  function sessionView() {
+    var deck = P.deck;
+    var head = '<div class="row" style="justify-content:space-between"><span class="tag">' + (deck.kind === "phrase" || deck.kind === "plan" ? "TRIP" : deck.lv) + '</span><button class="btn quiet" data-act="leave">' + (P.back ? "Back to home" : "Back to decks") + '</button></div>' +
+      '<div><h2>' + deck.title + '</h2><p class="lede">' + deck.sub + '</p></div>' +
+      '<div class="seg" role="group" aria-label="Modo"><button data-mode="flash" aria-pressed="' + (P.mode === "flash") + '">Flashcards</button><button data-mode="quiz" aria-pressed="' + (P.mode === "quiz") + '">Quiz</button>' + (SR ? '<button data-mode="speak" aria-pressed="' + (P.mode === "speak") + '">Hablar</button>' : "") + '</div>';
+    if (P.total === 0) {
+      return '<section class="panel">' + head + '<div class="note ok">Todo al día. Nothing in this deck is due right now.</div>' +
+        '<div class="row"><button class="btn primary" data-act="practice-all">Practice all ' + deck.cards.length + ' cards anyway</button></div></section>';
+    }
+    if (P.pos >= P.queue.length) {
+      if (P.planStep && !P.marked) { P.marked = true; planDone(P.planStep); }
+      return '<section class="panel">' + head + '<div class="eyebrow">Sesión completa</div>' +
+        '<h2>' + P.right + ' de ' + P.total + ' correctas</h2>' +
+        '<div class="bar-m" aria-hidden="true"><i style="width:' + Math.round(P.right / P.total * 100) + '%"></i></div>' +
+        '<p class="lede">Cards you missed come back tomorrow. Cards you knew come back after longer gaps.</p>' +
+        '<div class="row">' + (P.back ? '<button class="btn primary" data-act="leave">Volver al inicio</button>' : '<button class="btn primary" data-act="practice-all">Practice again</button><button class="btn" data-act="leave">Choose another deck</button>') + '</div></section>';
+    }
+    if (P.mode === "speak") {
+      var sc = cardR(deck, P.queue[P.pos]), sp = P.sp, hasSent = !!sc[2], read = P.spMode === "read" && hasSent;
+      var showAns = sp.passed || sp.revealed || sp.tries >= 2;
+      var segm = hasSent ? '<div class="seg" role="group" aria-label="Tipo de práctica"><button data-spmode="recall" aria-pressed="' + !read + '">Recall</button><button data-spmode="read" aria-pressed="' + read + '">Read aloud</button></div>' : "<span></span>";
+      var ask = read
+        ? '<div class="eyebrow">Read this aloud</div><div class="qprompt">' + blanks(esc(sc[2])) + '</div>'
+        : '<div class="eyebrow">Say it in Spanish</div><div class="qprompt">' + blanks(esc(sc[1])) + '</div>';
+      var ans = showAns && !read ? '<div class="note info"><b>' + blanks(esc(sc[0])) + '</b>' + (sc[2] ? '<br><span class="ex">' + esc(sc[2]) + '</span>' : "") + '</div>' : "";
+      var fbk = "";
+      if (sp.err) fbk = '<div class="note no">' + esc(SP_ERR[sp.err] || ("Speech recognition stopped (" + sp.err + ")."))  + '</div>';
+      else if (sp.heard !== null) {
+        var cls = sp.passed ? "ok" : (sp.score >= CLOSE ? "info" : "no");
+        var verdict = sp.passed ? "Muy bien. " : (sp.score >= CLOSE ? "Casi. " : "Otra vez. ");
+        fbk = '<div class="note ' + cls + '"><b>' + verdict + '</b>Heard: “' + esc(sp.heard) + '”' +
+          (!sp.passed && sp.missed.length ? '<br>Missing or different: ' + sp.missed.map(esc).join(", ") : "") + '</div>';
+      }
+      var mic = '<button class="btn primary mic' + (sp.listening ? " live" : "") + '" data-act="mic">' + (sp.listening ? "Escuchando…" : (sp.tries ? "Hablar otra vez" : "Hablar")) + '</button>';
+      var more = '';
+      if (sp.passed || sp.tries >= 2 || sp.revealed) more = '<button class="btn" data-act="spnext">Continuar</button>';
+      else if (!read) more = '<button class="btn quiet" data-act="reveal">Show answer</button>';
+      if (read && !sp.passed && sp.tries >= 1 && !more) more = '<button class="btn" data-act="spnext">Continuar</button>';
+      return '<section class="panel">' + head + '<div class="row" style="justify-content:space-between">' + segm + '<span class="eyebrow">' + (P.pos + 1) + ' de ' + P.queue.length + '</span></div>' +
+        ask + ans + fbk +
+        '<div class="row">' + mic + (canSpeak ? '<button class="btn" data-act="say">Escuchar</button>' : "") + more + '</div>' + '</section>';
+    }
+    var prog = '<div class="eyebrow">' + (P.pos + 1) + ' de ' + P.queue.length + '</div>';
+    if (P.mode === "flash") {
+      var c = cardR(deck, P.queue[P.pos]);
+      var face = P.flipped
+        ? '<div class="es" style="font-size:1.6rem">' + blanks(esc(c[0])) + '</div><div class="en">' + blanks(esc(c[1])) + '</div>' + (c[2] ? '<div class="ex">' + esc(c[2]) + '</div>' : "")
+        : '<div class="es">' + blanks(esc(c[0])) + '</div><div class="hint">Toca para ver la respuesta</div>';
+      var act = P.flipped
+        ? '<div class="row"><button class="btn" data-act="again">Otra vez</button><button class="btn primary" data-act="good">La sé</button>' + (canSpeak ? '<button class="btn quiet" data-act="say">Escuchar</button>' : "") + '</div>'
+        : (canSpeak ? '<div class="row"><button class="btn quiet" data-act="say">Escuchar</button></div>' : "");
+      return '<section class="panel">' + head + prog + '<button class="card" data-act="flip" aria-label="Voltear tarjeta">' + face + '</button>' + act + '</section>';
+    }
+    var cc = cardR(deck, P.q.i), ansd = P.picked !== null;
+    var opts = P.q.opts.map(function (o, i) {
+      var cls = ansd ? (o.ok ? " right" : (P.picked === i ? " wrong" : "")) : "";
+      return '<button class="opt' + cls + '" data-qopt="' + i + '"' + (ansd ? " disabled" : "") + '><span class="k">' + "ABCD"[i] + '</span><span>' + esc(o.t) + '</span></button>';
+    }).join("");
+    var fb = ansd ? '<div class="note ' + (P.q.opts[P.picked].ok ? "ok" : "no") + '"><b>' + blanks(esc(cc[0])) + '</b>' + (cc[2] ? '<br><span class="ex">' + esc(cc[2]) + '</span>' : "") + '</div><div class="row"><button class="btn primary" data-act="qnext">Continue</button>' + (canSpeak ? '<button class="btn quiet" data-act="say">Escuchar</button>' : "") + '</div>' : "";
+    return '<section class="panel">' + head + prog + '<div class="qprompt">¿Qué significa “' + blanks(esc(cc[0])) + '”?</div><div class="opts">' + opts + '</div>' + fb + '</section>';
+  }
+
+  /* ----- progress ----- */
+  function progressView() {
+    var learned = 0, total = 0;
+    visibleDecks().forEach(function (d) { learned += mastered(d); total += d.cards.length; });
+    var pl = S.placement, scenesDone = Object.keys(S.scenes).length;
+    var rows = visibleDecks().map(function (d) {
+      var m = mastered(d), n = d.cards.length;
+      return '<li style="flex-direction:column;gap:6px"><div class="row" style="justify-content:space-between"><span><span class="mono" style="color:var(--muted)">' + (d.kind === "phrase" ? "TRIP" : d.lv) + '</span> ' + d.title + '</span><span class="mono">' + m + '/' + n + '</span></div><div class="bar-m" aria-hidden="true"><i style="width:' + Math.round(m / n * 100) + '%"></i></div></li>';
+    }).join("");
+    var hist = S.history.length ? S.history.slice().reverse().map(function (h) {
+      var detail = h.scores && h.scores.length ? h.scores.reduce(function (a, b) { return a + b; }, 0) + "/" + h.scores.length + " quiz" : "chosen";
+      return '<li><span>' + esc(h.date) + '</span><span class="mono">' + h.level + ' · ' + detail + '</span></li>';
+    }).join("") : '<li><span style="color:var(--muted)">No level checks yet.</span></li>';
+    var nudge = (A.sb && !A.user) ? '<div class="note info">Your progress is saved on this device only. <button class="btn quiet inl" data-go="account">Create an account</button> to keep it across devices.</div>' : "";
+    return nudge + '<section class="panel"><div class="eyebrow">Progreso</div><h2>' + (pl ? "Nivel actual: " + pl.level : "Todavía sin nivel") + '</h2>' + (pl ? ladder(pl.level) : "") +
+      '<div class="stats"><div class="stat"><b>' + learned + '/' + total + '</b><span>cards learned</span></div><div class="stat"><b>' + S.streak + '</b><span>day streak</span></div><div class="stat"><b>' + scenesDone + '/' + SCENES.length + '</b><span>scenes played</span></div></div></section>' +
+      '<section class="panel"><h3>Dominio por mazo</h3><ul class="list">' + rows + '</ul></section>' +
+      '<section class="panel"><h3>Tu nivel</h3><ul class="list">' + hist + '</ul>' +
+      '<div class="row"><button class="btn" data-go="level">Change my level</button><button class="btn" data-act="start-test">Take the 5-question quiz</button></div></section>';
+  }
+
+  function render() {
+    var onb = needsOnb();
+    if (onb && view !== "test" && view !== "account") view = "home";
+    document.body.classList.toggle("onb", onb || view === "test");
+    renderNav(); renderTrip();
+    var html;
+    if (onb && view === "home") html = onboardView();
+    else if (view === "home") html = homeView();
+    else if (view === "test") html = testView();
+    else if (view === "level") html = levelView();
+    else if (view === "phrases") html = phrasesView();
+    else if (view === "scenes") html = scenesView();
+    else if (view === "study") html = studyView();
+    else if (view === "account") html = accountView();
+    else html = progressView();
+    if (onb && view === "account") html = '<div><button class="btn quiet" data-go="home">Back</button></div>' + html;
+    $("app").innerHTML = html;
+    if (view === "home" && !onb && S.group && S.group.name) setTimeout(function () { loadGroup(false); }, 0);
+  }
+
+  /* ---------- Events ---------- */
+  document.addEventListener("click", function (ev) {
+    var el = ev.target.closest("[data-go],[data-act],[data-opt],[data-deck],[data-mode],[data-qopt],[data-country],[data-spmode],[data-amode],[data-level],[data-show],[data-fav],[data-scene],[data-sc-ask],[data-sc-you],[data-pbfav]");
+    if (!el) return;
+    var ds = el.dataset;
+    if (ds.amode) {
+      var ei = $("a-email"); if (ei) A.email = ei.value;
+      A.mode = ds.amode; A.msg = null; render(); return;
+    }
+    if (ds.spmode && P) { stopRec(); P.spMode = ds.spmode; resetSp(); render(); return; }
+    if (ds.country) { stopRec(); S.country = ds.country; P = null; SC = null; save(); render(); return; }
+    if (ds.level) {
+      S.placement = { level: ds.level, fresh: ds.level === "A1", date: today(), scores: [], t: Date.now(), via: "chosen" };
+      S.history.push({ level: ds.level, date: today(), scores: [] });
+      OB.pick = false; view = "home"; save(); render(); window.scrollTo(0, 0); return;
+    }
+    if (ds.go) {
+      stopRec(); view = ds.go; if (view !== "study") P = null; if (view !== "scenes") SC = null;
+      if (view === "test" && T && T.done) T = null;
+      render(); window.scrollTo(0, 0); return;
+    }
+    if (ds.show !== undefined) { openShow(parseInt(ds.show, 10)); return; }
+    if (ds.fav) {
+      var k = ds.fav, ix = S.favs.indexOf(k);
+      if (ix >= 0) S.favs.splice(ix, 1); else S.favs.push(k);
+      var y = window.scrollY; save(); render(); window.scrollTo(0, y); return;
+    }
+    if (ds.pbfav !== undefined) { PB.fav = ds.pbfav === "1"; render(); return; }
+    if (ds.scene) { startScene(ds.scene, false); window.scrollTo(0, 0); return; }
+    if (ds.scAsk !== undefined && SC && SC.ask && !SC.ask.done) {
+      var o = SC.ask.opts[parseInt(ds.scAsk, 10)];
+      if (o.ok) { SC.ask.done = true; if (!SC.ask.tries) SC.points += 1; } else { o.wrong = true; SC.ask.tries += 1; }
+      render(); return;
+    }
+    if (ds.scYou !== undefined && SC && SC.you && !SC.you.done) {
+      var yi = parseInt(ds.scYou, 10), yo = SC.you.opts[yi];
+      if (yo.ok) { SC.you.done = true; SC.you.picked = yi; if (!SC.you.tries) SC.points += 1; } else { yo.wrong = true; SC.you.tries += 1; }
+      render(); return;
+    }
+    if (ds.deck) { openDeck(ds.deck, "flash", false); window.scrollTo(0, 0); return; }
+    if (ds.mode && P) { openDeck(P.deck.id, ds.mode, P.all, P.synth); return; }
+    if (ds.opt !== undefined) { answer(parseInt(ds.opt, 10)); return; }
+    if (ds.qopt !== undefined && P && P.picked === null) {
+      var i = parseInt(ds.qopt, 10); P.picked = i;
+      var ok = P.q.opts[i].ok; if (ok) P.right += 1;
+      gradeP(P.q.i, ok); render(); return;
+    }
+    switch (ds.act) {
+      case "ob-pick": OB.pick = true; render(); break;
+      case "ob-back": OB.pick = false; render(); break;
+      case "ob-country": S.country = null; save(); render(); break;
+      case "ob-quiz": case "start-test": startTest(); window.scrollTo(0, 0); break;
+      case "quiz-exit": T = null; view = "home"; render(); window.scrollTo(0, 0); break;
+      case "level-back": view = "home"; render(); break;
+      case "test-done": T = null; view = "home"; render(); window.scrollTo(0, 0); break;
+      case "test-pick": T = null; view = "level"; render(); window.scrollTo(0, 0); break;
+      case "next-q": nextQ(); window.scrollTo(0, 0); break;
+      case "edit-date": HOME.editDate = true; render(); break;
+      case "cancel-date": HOME.editDate = false; render(); break;
+      case "plan": {
+        var step = ds.step;
+        if (step === "review") {
+          var rv = planReview(), refs = rv.refs;
+          if (!refs.length) refs = shuffle(phraseRefs().filter(function (r) { return cardState(r.deck, r.i).seen; })).slice(0, 8);
+          if (!refs.length) refs = shuffle(phraseRefs()).slice(0, 5);
+          openSynth({ id: "plan-review", step: "review", title: "Frases del día", sub: "Today's phrases", refs: refs }, "flash");
+        } else if (step === "speak") {
+          var pool = phraseRefs().filter(function (r) { var c = cardR(r.deck, r.i); return !/\d|_{2,}/.test(c[0]); });
+          var seen = pool.filter(function (r) { return cardState(r.deck, r.i).seen; });
+          openSynth({ id: "plan-speak", step: "speak", title: "Dilo en voz alta", sub: "Say today's phrases out loud", refs: shuffle(seen.length >= 4 ? seen : pool).slice(0, 4) }, "speak");
+        } else if (step === "scene") { startScene(ds.sceneId, true); }
+        window.scrollTo(0, 0); break;
+      }
+      case "copy-link": {
+        var inp = $("invite-url"), done = function () { el.textContent = "Copied"; setTimeout(function () { el.textContent = "Copy link"; }, 1500); };
+        try { navigator.clipboard.writeText(inp.value).then(done, function () { inp.select(); try { document.execCommand("copy"); done(); } catch (e) {} }); }
+        catch (e) { inp.select(); try { document.execCommand("copy"); done(); } catch (e2) {} }
+        break;
+      }
+      case "share-link": try { navigator.share({ title: "Rumbo Español", text: "Practice Spanish for the trip with me:", url: inviteLink() }).catch(function () {}); } catch (e) {} break;
+      case "group-start": S.group = { code: newGroupCode(), name: null }; save(); render(); break;
+      case "group-refresh": loadGroup(true); break;
+      case "group-leave": leaveGroup(); break;
+      case "show-close": SHOW = null; renderShow(); break;
+      case "show-prev": if (SHOW && SHOW.pos > 0) { SHOW.pos -= 1; renderShow(); } break;
+      case "show-next": if (SHOW && SHOW.pos < PB.list.length - 1) { SHOW.pos += 1; renderShow(); } break;
+      case "show-say": if (SHOW) { var rr = PB.list[SHOW.pos]; say(cardR(deckById(rr.d), rr.i)[0]); } break;
+      case "sc-leave": stopRec(); { var fp = SC && SC.fromPlan; SC = null; if (fp) view = "home"; } render(); window.scrollTo(0, 0); break;
+      case "sc-say": if (SC) say(npcText(SC.scene.turns[SC.ti])); break;
+      case "sc-say-you": if (SC && SC.you && SC.you.done) say(SC.you.opts[SC.you.picked].es); break;
+      case "sc-en": SC.showEn = !SC.showEn; render(); break;
+      case "sc-reveal": SC.revealed = true; render(); break;
+      case "sc-hide": S.hideText = !S.hideText; save(); render(); break;
+      case "sc-next":
+        stopRec();
+        if (SC.ti >= SC.scene.turns.length - 1) { finishScene(); render(); }
+        else { SC.ti += 1; beginTurn(); render(); say(npcText(SC.scene.turns[SC.ti])); }
+        window.scrollTo(0, 0); break;
+      case "sc-speak":
+        if (SC && SC.you && SC.you.done) {
+          if (SC.sp && SC.sp.listening) { stopRec(); SC.sp.listening = false; render(); break; }
+          var target = SC.you.opts[SC.you.picked].es;
+          SC.sp = { listening: true, heard: null, score: 0, err: null }; render();
+          recognize(function (err, alts) {
+            if (!SC || !SC.sp) return;
+            SC.sp.listening = false;
+            if (err) SC.sp.err = err; else { var r = scoreSpeech(target, alts); SC.sp.heard = r.heard; SC.sp.score = r.score; }
+            render();
+          });
+        }
+        break;
+      case "start-test-x": break;
+      case "study-level": view = "study"; P = null; render(); window.scrollTo(0, 0); break;
+      case "leave": stopRec(); { var b = P && P.back; P = null; if (b) view = b; } render(); break;
+      case "practice-all": openDeck(P.deck.id, P.mode, true, P.synth); break;
+      case "flip": P.flipped = !P.flipped; render(); break;
+      case "signout": doSignOut(false); break;
+      case "signout-force": doSignOut(true); break;
+      case "syncnow": if (A.user) { A.signoutWarn = false; push().then(function (ok) { if (ok) syncDown(); render(); }); } break;
+      case "del-ask": A.confirmDelete = true; render(); break;
+      case "del-no": A.confirmDelete = false; render(); break;
+      case "del-yes": doDelete(); break;
+      case "install": if (deferredInstall) { deferredInstall.prompt(); deferredInstall = null; renderTrip(); } break;
+      case "mic": if (P && P.sp) { if (P.sp.listening) { stopRec(); P.sp.listening = false; render(); } else listen(); } break;
+      case "reveal": if (P && P.sp) { P.sp.revealed = true; render(); } break;
+      case "spnext":
+        if (P && P.sp) {
+          stopRec();
+          if (!P.sp.graded) { P.sp.graded = true; gradeP(P.queue[P.pos], false); }
+          P.pos += 1; resetSp(); render(); window.scrollTo(0, 0);
+        }
+        break;
+      case "say":
+        if (P && P.mode === "speak" && P.queue[P.pos] !== undefined) say(spTarget());
+        else if (P && P.mode === "quiz" && P.q) say(cardR(P.deck, P.q.i)[0]);
+        else if (P && P.queue[P.pos] !== undefined) say(cardR(P.deck, P.queue[P.pos])[0]);
+        break;
+      case "again": case "good":
+        gradeP(P.queue[P.pos], ds.act === "good");
+        if (ds.act === "good") P.right += 1;
+        P.pos += 1; P.flipped = false; render(); break;
+      case "qnext": P.pos += 1; buildQuiz(); render(); break;
+    }
+  });
+
+  document.addEventListener("input", function (ev) {
+    if (ev.target && ev.target.id === "pb-search") {
+      PB.q = ev.target.value;
+      var box = $("pb-list"); if (box) box.innerHTML = pbBody();
+    }
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape" && SHOW) { SHOW = null; renderShow(); }
+  });
+
+
+  document.addEventListener("submit", function (ev) {
+    var f = ev.target.closest && ev.target.closest("form[data-form]");
+    if (!f) return;
+    ev.preventDefault();
+    var kind = f.getAttribute("data-form"), fd = new FormData(f);
+    if (kind === "auth") { if (A.sb) submitAuth(f); }
+    else if (kind === "date") {
+      var v = (fd.get("date") || "").toString();
+      if (v && !/^\d{4}-\d{2}-\d{2}$/.test(v)) return;
+      S.tripDate = v || null; HOME.editDate = false; save(); render();
+    } else if (kind === "join") {
+      var nm = (fd.get("name") || "").toString().trim().slice(0, 24);
+      if (nm && S.group) { S.group.name = nm; save(); render(); loadGroup(true); }
+    }
+  });
+
+  /* Invite links: ?c=mx|ec|co &d=YYYY-MM-DD &g=GROUPCODE */
+  function applyLink() {
+    var q, changed = false;
+    try { q = new URLSearchParams(location.search); } catch (e) { return; }
+    var c = q.get("c"), d = q.get("d"), g = q.get("g");
+    if (c && COUNTRIES[c]) { S.country = c; changed = true; }
+    if (d && /^\d{4}-\d{2}-\d{2}$/.test(d) && !isNaN(new Date(d + "T00:00:00").getTime())) { S.tripDate = d; changed = true; }
+    if (g && /^[A-Z0-9]{8}$/.test(g) && (!S.group || (S.group.code !== g && !S.group.name))) {
+      S.group = { code: g, name: null }; S.left = (S.left || []).filter(function (x) { return x !== g; }); changed = true;
+    }
+    if (changed) saveLocal();
+    if ((c || d || g) && window.history && history.replaceState) { try { history.replaceState(null, "", location.pathname); } catch (e) {} }
+  }
+  applyLink();
+  render();
+  initAuth();
+})();
+</script>
+</body>
+</html>
