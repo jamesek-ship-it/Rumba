@@ -1,6 +1,6 @@
 /* Bump CACHE on every push so installed copies pick up the new index.html. */
-const CACHE = "rumbo-v10";
-const SHELL = ["./", "index.html", "manifest.webmanifest", "vendor/supabase.js", "config.js", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/apple-touch-icon.png"];
+const CACHE = "rumbo-v11";
+const SHELL = ["./", "index.html", "manifest.webmanifest", "vendor/supabase.js", "config.js", "trip.js", "rates.json", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/apple-touch-icon.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -34,8 +34,8 @@ self.addEventListener("fetch", (e) => {
 
   if (url.origin !== location.origin) return;
 
-  // Config: network first so a changed key is picked up right away.
-  if (url.pathname.endsWith("/config.js")) {
+  // Config, trip info and rates: network first so changes show up right away; cached copy works offline.
+  if (/\/(config|trip)\.js$|\/rates\.json$/.test(url.pathname)) {
     e.respondWith(fetch(req).then((res) => { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); return res; }).catch(() => caches.match(req)));
     return;
   }

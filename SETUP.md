@@ -34,3 +34,14 @@ exactly as before and keeps progress on the device only (the "Entrar" button sta
   name, and the link now carries a group code (`&g=XXXXXXXX`). Friends who sign in and join with the link
   see each other's phrases learned and days practiced this week. Nothing else is shared.
 - Anyone with the link can join the group, so share it only with the people you mean to.
+
+## Recursos tab: trip info and the currency converter
+
+- **Trip info** (flights, where you are staying, schedule, contacts) lives in `trip.js`. Edit only that file;
+  app updates never overwrite it. Leave `sections` empty and the card stays hidden. There is an example
+  in the comments at the top of the file.
+- **Exchange rates** live in `rates.json` and are refreshed every Monday by a GitHub Action
+  (`.github/workflows/rates.yml`, which runs `scripts/update_rates.py`). It uses ExchangeRate-API's free
+  open endpoint, needs no key, and refuses to save a rate that looks wrong. To refresh by hand, open the
+  repo's **Actions** tab, pick **Update exchange rates**, and click **Run workflow**.
+- Ecuador uses US dollars, so its Recursos tab says there is nothing to convert.

@@ -214,6 +214,17 @@ body.onb .scroller { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
 .nav { position: static; flex: none; }
 body.noscroll .scroller { overflow: hidden; }
 
+/* resources */
+.big-in { font-size: 1.4rem !important; font-family: var(--font-mono); font-weight: 600; }
+.cvout { display: flex; flex-direction: column; gap: 2px; min-height: 64px; justify-content: center; background: var(--accent-soft); border-radius: 12px; padding: 12px 16px; color: var(--ink); }
+.cvout b { font-family: var(--font-display); font-size: 2rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.cvout span { color: var(--muted); font-size: 0.9rem; }
+.lnk { color: var(--accent); font-weight: 600; text-underline-offset: 3px; }
+.list li.ti { flex-direction: column; gap: 2px; justify-content: flex-start; }
+.tit { color: var(--muted); white-space: pre-line; }
+.nav button { font-size: 0.68rem; padding-inline: 0; }
+.nav .nen { font-size: 0.58rem; }
+
 /* glosses */
 .gl::before { content: " · "; white-space: pre; }
 h1 .gl::before, h2 .gl::before, h3 .gl::before, .stx b .gl::before, .hint .gl::before, .qprompt .gl::before { content: none; }
@@ -311,6 +322,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
 <nav class="nav" id="nav" aria-label="Secciones"></nav>
 <div class="show" id="show" hidden role="dialog" aria-modal="true" aria-label="Frase"></div>
 <script src="config.js"></script>
+<script src="trip.js"></script>
 <script src="vendor/supabase.js"></script>
 <script>
 (function () {
@@ -353,15 +365,15 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
 
   /* ---------- Destinations ---------- */
   var COUNTRIES = {
-    mx: { name: "México", code: "MX", lang: "es-MX", currency: "Mexican peso (MXN)", emergency: "911", notes: [
+    mx: { name: "México", code: "MX", lang: "es-MX", currency: "Mexican peso (MXN)", notes: [
       "Usted is the safe choice with older people, in shops and in hotels. Tú is fine with people your age.",
       "Diminutives soften requests and add warmth: un cafecito, un momentito, ahorita.",
       "Say “¿Mande?” when you did not catch something. It is the polite Mexican way to say “pardon?”." ] },
-    ec: { name: "Ecuador", code: "EC", lang: "es-EC", currency: "US dollar (USD)", emergency: "911", notes: [
+    ec: { name: "Ecuador", code: "EC", lang: "es-EC", currency: "US dollar (USD)", notes: [
       "Ecuador uses the US dollar, so prices and change work just like at home.",
       "Speech in the Andes (Quito) tends to be slower and very polite. The coast (Guayaquil) is faster and more relaxed.",
       "Words from Kichwa show up in daily talk: guagua, ñaño, achachay." ] },
-    co: { name: "Colombia", code: "CO", lang: "es-CO", currency: "Colombian peso (COP)", emergency: "123", notes: [
+    co: { name: "Colombia", code: "CO", lang: "es-CO", currency: "Colombian peso (COP)", notes: [
       "Usted is common in Colombia, even among friends in some regions. It sounds warm, not cold.",
       "In Medellín and Cali you will hear “vos” instead of “tú”. You only need to understand it. Tú and usted are always safe.",
       "“Con gusto”, “a la orden” and “qué pena” keep everyday exchanges polite and friendly." ] }
@@ -761,8 +773,6 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
   function tripNotes() {
     var c = COUNTRIES[C()];
     return '<section class="panel"><div class="eyebrow">Notas de viaje · ' + c.name + '</div>' +
-      '<div class="stats"><div class="stat"><b class="mono" style="font-size:1.4rem">' + c.emergency + '</b><span>emergency number</span></div>' +
-      '<div class="stat"><b style="font-size:1.1rem;line-height:1.2">' + c.currency + '</b><span>currency</span></div></div>' +
       '<ul class="list">' + c.notes.map(function (n) { return '<li>' + n + '</li>'; }).join("") + '</ul></section>';
   }
   function ladder(placed) {
@@ -1106,7 +1116,8 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
     phrases: '<path d="M4 5h16v11H10l-5 4v-4H4z"/>',
     scenes: '<path d="M3 6h11v7H8l-3 3v-3H3z"/><path d="M10 17h6l3 3v-3h2v-7h-5"/>',
     study: '<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 10h16"/>',
-    progress: '<path d="M5 20V11M12 20V5M19 20v-7"/>'
+    progress: '<path d="M5 20V11M12 20V5M19 20v-7"/>',
+    resources: '<circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>'
   };
   function needsOnb() { return !S.country || !S.placement; }
   function deckById(id) { return DECKS.filter(function (d) { return d.id === id; })[0]; }
@@ -1116,7 +1127,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
 
   function toTop() { var sc = $("scroller"); if (sc) sc.scrollTop = 0; }
   function renderNav() {
-    var items = [["home", "Inicio", "Home"], ["phrases", "Frases", "Phrases"], ["scenes", "Escenas", "Scenes"], ["study", "Estudiar", "Study"], ["progress", "Progreso", "Progress"]];
+    var items = [["home", "Inicio", "Home"], ["phrases", "Frases", "Phrases"], ["scenes", "Escenas", "Scenes"], ["study", "Estudiar", "Study"], ["progress", "Progreso", "Progress"], ["resources", "Recursos", "Resources"]];
     $("nav").innerHTML = items.map(function (it) {
       var on = view === it[0] || (it[0] === "home" && view === "level");
       return '<button data-go="' + it[0] + '"' + (on ? ' aria-current="page"' : "") + '><svg viewBox="0 0 24 24" aria-hidden="true">' + ICONS[it[0]] + '</svg><span class="nes">' + it[1] + '</span><span class="nen">' + it[2] + '</span></button>';
@@ -1235,7 +1246,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
       '<section class="panel"><h2>Invita a los muchachos</h2><p class="lede">Send this link. It opens the app set to ' + c.name + (S.tripDate ? " with your trip date" : "") + '.</p>' +
       '<div class="field"><label for="invite-url" class="sr">Invite link</label><input id="invite-url" type="text" readonly value="' + esc(link) + '"></div>' +
       '<div class="row"><button class="btn primary" data-act="copy-link">Copy link</button>' + (navigator.share ? '<button class="btn" data-act="share-link">Share</button>' : "") + '</div>' +
-      groupPanel() + '</section>' + tripNotes();
+      groupPanel() + '</section>';
   }
 
   function deckBtn(d) {
@@ -1559,11 +1570,91 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
   }
 
 
+
+  /* ----- resources: trip info, currency converter, country notes ----- */
+  var CUR = {
+    co: { code: "COP", name: "Colombian peso", quick: [10000, 20000, 50000, 100000, 200000, 500000] },
+    mx: { code: "MXN", name: "Mexican peso", quick: [50, 100, 200, 500, 1000, 2000] }
+  };
+  var RT = { data: null, tried: false, err: false };
+  var CV = { dir: "toUsd", amt: "" };
+  function loadRates() {
+    RT.tried = true;
+    fetch("rates.json", { cache: "no-cache" })
+      .then(function (r) { if (!r.ok) throw new Error("http"); return r.json(); })
+      .then(function (d) { if (d && d.rates) { RT.data = d; RT.err = false; } else RT.err = true; })
+      .catch(function () { RT.err = true; })
+      .then(function () { var ae = document.activeElement; if (view === "resources" && !(ae && ae.id === "cv-amt")) render(); });
+  }
+  function rateFor(code) { var v = RT.data && RT.data.rates && RT.data.rates[code]; return typeof v === "number" && v > 0 ? v : null; }
+  /* "50.000", "50,000", "50000" and "1,234.56" all work: a last separator followed by exactly three digits is a thousands mark. */
+  function parseAmt(str) {
+    var t = String(str).replace(/[^\d.,]/g, "");
+    if (!/\d/.test(t)) return null;
+    var idx = Math.max(t.lastIndexOf("."), t.lastIndexOf(",")), n;
+    if (idx < 0) n = parseFloat(t);
+    else {
+      var head = t.slice(0, idx), tail = t.slice(idx + 1);
+      if (tail.length === 3 && head.replace(/[.,]/g, "") !== "0" && head !== "") n = parseFloat(head.replace(/[.,]/g, "") + tail);
+      else n = parseFloat(head.replace(/[.,]/g, "") + "." + tail);
+    }
+    return isFinite(n) && n >= 0 && n < 1e12 ? n : null;
+  }
+  function money(n, code) {
+    if (code === "USD") return "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return code + " " + n.toLocaleString("en-US", { maximumFractionDigits: n < 100 ? 2 : 0 });
+  }
+  function cvOut() {
+    var cur = CUR[C()], rate = rateFor(cur.code), n = parseAmt(CV.amt);
+    if (!rate) return RT.err ? "Could not load the exchange rate. Open the app online once and it will be saved for offline use." : "Loading the rate…";
+    if (n === null) return "Type an amount above.";
+    return CV.dir === "toUsd"
+      ? '<b>' + money(n / rate, "USD") + '</b><span>' + money(n, cur.code) + '</span>'
+      : '<b>' + money(n * rate, cur.code) + '</b><span>' + money(n, "USD") + '</span>';
+  }
+  function safeUrl(u) { return /^(https?:|tel:|mailto:)/i.test(String(u || "")) ? u : null; }
+  function tripInfoPanel(eyebrow) {
+    var T = window.RUMBO_TRIP, secs = T && Array.isArray(T.sections) ? T.sections : [];
+    secs = secs.filter(function (x) { return x && x.title && Array.isArray(x.items) && x.items.length; });
+    if (!secs.length) return "";
+    return '<section class="panel"><div class="eyebrow">' + eyebrow + '</div><h2>Info del viaje</h2>' + secs.map(function (x) {
+      return '<div class="group"><h3 data-nogloss>' + esc(x.title) + '</h3><ul class="list">' + x.items.filter(function (it) { return it && it.label; }).map(function (it) {
+        var u = safeUrl(it.url);
+        return '<li class="ti"><b>' + esc(it.label) + '</b>' + (it.text ? '<span class="tit">' + esc(it.text) + '</span>' : "") +
+          (u ? '<a class="lnk" href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(it.linkText || "Open") + '</a>' : "") + '</li>';
+      }).join("") + '</ul></div>';
+    }).join("") + '</section>';
+  }
+  function converterPanel(eyebrow) {
+    var cur = CUR[C()], c = COUNTRIES[C()];
+    if (!cur) {
+      return '<section class="panel"><div class="eyebrow">' + eyebrow + '</div><h2>Convertidor de moneda</h2>' +
+        '<p class="lede">' + c.name + ' uses the US dollar, so there is nothing to convert. Prices you see are already in dollars.</p></section>';
+    }
+    var rate = rateFor(cur.code), d = RT.data && RT.data.updated, age = d ? dayNum(today()) - dayNum(d.replace(/-0/g, "-")) : null;
+    var info = rate
+      ? '<p class="s mono">1 USD = ' + rate.toLocaleString("en-US", { maximumFractionDigits: 2 }) + ' ' + cur.code + ' · updated ' + esc(fmtDate(d.replace(/-0/g, "-"))) + '</p>' +
+        (age !== null && age > 10 ? '<div class="note info">This rate is ' + age + ' days old. It refreshes every Monday when you are online.</div>' : "")
+      : "";
+    var from = CV.dir === "toUsd" ? cur.code : "USD";
+    var quick = rate ? '<ul class="list">' + cur.quick.map(function (q) { return '<li><span class="mono">' + money(q, cur.code) + '</span><span class="mono">' + money(q / rate, "USD") + '</span></li>'; }).join("") + '</ul>' : "";
+    return '<section class="panel"><div class="eyebrow">' + eyebrow + '</div><h2>Convertidor de moneda</h2>' +
+      '<div class="seg" role="group" aria-label="Dirección"><button data-cvdir="toUsd" data-nogloss aria-pressed="' + (CV.dir === "toUsd") + '">' + cur.code + ' → USD</button><button data-cvdir="fromUsd" data-nogloss aria-pressed="' + (CV.dir === "fromUsd") + '">USD → ' + cur.code + '</button></div>' +
+      '<div class="field"><label for="cv-amt">Amount in ' + from + '</label><input id="cv-amt" class="big-in" type="text" inputmode="decimal" autocomplete="off" placeholder="' + (CV.dir === "toUsd" ? cur.quick[2].toLocaleString("en-US") : "20") + '" value="' + esc(CV.amt) + '"></div>' +
+      '<div class="cvout" id="cv-out" aria-live="polite">' + cvOut() + '</div>' + info +
+      (quick ? '<h3>Precios comunes</h3>' + quick : "") +
+      '<p class="s">Mid-market rate from <a class="lnk" href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer">ExchangeRate-API</a>. ATMs, cards and exchange booths give a little less, so treat this as a guide.</p></section>';
+  }
+  function resourcesView() {
+    var c = COUNTRIES[C()], eb = 'Recursos · ' + c.name, trip = tripInfoPanel(eb);
+    return trip + converterPanel(trip ? "Dinero" : eb) + tripNotes();
+  }
+
   /* ---------- English glosses for the Spanish interface labels ----------
      Every Spanish label in the app gets its English underneath (buttons) or beside it (headings),
      added after each render so the view code stays readable. To gloss a new label, add it here. */
   var GLOSS = {
-    "Hoy": "Today", "Empezar": "Start", "Otra vez": "Again", "Invita a los muchachos": "Invite the guys", "Los muchachos": "The group",
+    "Hoy": "Today", "Recursos": "Resources", "Info del viaje": "Trip info", "Convertidor de moneda": "Currency converter", "Precios comunes": "Common prices", "Dinero": "Money", "Empezar": "Start", "Otra vez": "Again", "Invita a los muchachos": "Invite the guys", "Los muchachos": "The group",
     "Quiz de 5 preguntas": "5-question quiz", "Casi.": "Almost.", "Correcto.": "Correct.", "Sin problema.": "No worries.", "Muy bien.": "Very good.", "Otra vez.": "Try again.",
     "Salir": "Exit", "Tu nivel": "Your level", "Todas": "All", "Cerrar": "Close", "Anterior": "Previous", "Siguiente": "Next", "Escuchar": "Listen",
     "Escena completa": "Scene complete", "Volver al inicio": "Back to start", "Repetir": "Repeat", "Otra escena": "Another scene", "Escuchas": "You hear",
@@ -1578,7 +1669,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
   var GLOSS_RX = [
     [/^Faltan (\d+) días\.$/, "$1 days to go."], [/^Tu viaje fue hace (\d+) días?\.$/, "Your trip was $1 day(s) ago."], [/^Tu viaje · (.+)$/, "Your trip · $1"],
     [/^Rumbo a (.+)\.$/, "Heading to $1."], [/^(\d+) de (\d+) hechos$/i, "$1 of $2 done"], [/^Pregunta (\d+) de (\d+)$/, "Question $1 of $2"],
-    [/^Turno (\d+) de (\d+)$/, "Turn $1 of $2"], [/^(\d+) de (\d+)$/, "$1 of $2"], [/^Frases · (.+)$/, "Phrases · $1"], [/^Escenas · (.+)$/, "Scenes · $1"], [/^Notas de viaje · (.+)$/, "Travel notes · $1"],
+    [/^Turno (\d+) de (\d+)$/, "Turn $1 of $2"], [/^(\d+) de (\d+)$/, "$1 of $2"], [/^Frases · (.+)$/, "Phrases · $1"], [/^Recursos · (.+)$/, "Resources · $1"], [/^Escenas · (.+)$/, "Scenes · $1"], [/^Notas de viaje · (.+)$/, "Travel notes · $1"],
     [/^Favoritas \((\d+)\)$/, "Favorites ($1)"], [/^Empiezas en (\w+)\.$/, "You start at $1."], [/^Nivel actual: (\w+)$/, "Current level: $1"],
     [/^(\d+) de (\d+) correctas$/, "$1 of $2 correct"], [/^(\d+) de (\d+) a la primera$/, "$1 of $2 on the first try"],
     [/^¿Qué significa “(.*)”\?$/, "What does “$1” mean?"], [/^ESCENA$/i, "Scene"]
@@ -1620,17 +1711,19 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
     else if (view === "phrases") html = phrasesView();
     else if (view === "scenes") html = scenesView();
     else if (view === "study") html = studyView();
+    else if (view === "resources") html = resourcesView();
     else if (view === "account") html = accountView();
     else html = progressView();
     if (onb && view === "account") html = '<div><button class="btn quiet" data-go="home">Back</button></div>' + html;
     $("app").innerHTML = html;
     applyGloss($("app"));
+    if (view === "resources" && !RT.tried) loadRates();
     if (view === "home" && !onb && S.group && S.group.name) setTimeout(function () { loadGroup(false); }, 0);
   }
 
   /* ---------- Events ---------- */
   document.addEventListener("click", function (ev) {
-    var el = ev.target.closest("[data-go],[data-act],[data-opt],[data-deck],[data-mode],[data-qopt],[data-country],[data-spmode],[data-amode],[data-level],[data-show],[data-fav],[data-scene],[data-sc-ask],[data-sc-you],[data-pbfav]");
+    var el = ev.target.closest("[data-go],[data-act],[data-opt],[data-deck],[data-mode],[data-qopt],[data-country],[data-spmode],[data-amode],[data-level],[data-show],[data-fav],[data-scene],[data-sc-ask],[data-sc-you],[data-pbfav],[data-cvdir]");
     if (!el) return;
     var ds = el.dataset;
     if (ds.amode) {
@@ -1655,6 +1748,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
       if (ix >= 0) S.favs.splice(ix, 1); else S.favs.push(k);
       var sc = $("scroller"), y = sc ? sc.scrollTop : 0; save(); render(); if (sc) sc.scrollTop = y; return;
     }
+    if (ds.cvdir) { CV.dir = ds.cvdir; render(); var ci = $("cv-amt"); if (ci) ci.focus(); return; }
     if (ds.pbfav !== undefined) { PB.fav = ds.pbfav === "1"; render(); return; }
     if (ds.scene) { startScene(ds.scene, false); toTop(); return; }
     if (ds.scAsk !== undefined && SC && SC.ask && !SC.ask.done) {
@@ -1774,6 +1868,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
   });
 
   document.addEventListener("input", function (ev) {
+    if (ev.target && ev.target.id === "cv-amt") { CV.amt = ev.target.value; var out = $("cv-out"); if (out) out.innerHTML = cvOut(); return; }
     if (ev.target && ev.target.id === "pb-search") {
       PB.q = ev.target.value;
       var box = $("pb-list"); if (box) box.innerHTML = pbBody();

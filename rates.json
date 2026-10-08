@@ -1,0 +1,6 @@
+{
+  "base": "USD",
+  "updated": "2026-10-07",
+  "source": "ExchangeRate-API",
+  "rates": { "COP": 3199.575723, "MXN": 17.978414 }
+}
