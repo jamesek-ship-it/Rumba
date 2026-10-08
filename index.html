@@ -204,6 +204,16 @@ body { margin: 0; -webkit-text-size-adjust: 100%; padding-top: max(0px, env(safe
 .field input[type=date]::-webkit-date-and-time-value { text-align: left; min-height: 1.4em; }
 .field input[type=date]::-webkit-calendar-picker-indicator { margin-left: auto; }
 
+/* App shell: the page itself never scrolls. Content scrolls inside .scroller and the nav is a fixed-height
+   row beneath it, so it stays pinned on iOS (including the home-screen app) instead of bouncing with the page. */
+html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; padding: 0; }
+.scroller { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain;
+  padding: max(0px, env(safe-area-inset-top)) 16px 28px; }
+body.onb .scroller { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
+.nav { position: static; flex: none; }
+body.noscroll .scroller { overflow: hidden; }
+
 /* glosses */
 .gl::before { content: " · "; white-space: pre; }
 h1 .gl::before, h2 .gl::before, h3 .gl::before, .stx b .gl::before, .hint .gl::before, .qprompt .gl::before { content: none; }
@@ -288,6 +298,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
 </style>
 </head>
 <body>
+<div class="scroller" id="scroller">
 <div class="wrap">
   <header class="bar">
     <div class="brand">Rumbo<i>Español</i></div>
@@ -295,6 +306,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
   </header>
   <div class="trip" id="trip" role="group" aria-label="Destino"></div>
   <main id="app"></main>
+</div>
 </div>
 <nav class="nav" id="nav" aria-label="Secciones"></nav>
 <div class="show" id="show" hidden role="dialog" aria-modal="true" aria-label="Frase"></div>
@@ -1102,6 +1114,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
   function fmtDate(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" }); }
   function blanks(h) { return h.replace(/_{3,}/g, '<span class="blank"></span>'); }
 
+  function toTop() { var sc = $("scroller"); if (sc) sc.scrollTop = 0; }
   function renderNav() {
     var items = [["home", "Inicio", "Home"], ["phrases", "Frases", "Phrases"], ["scenes", "Escenas", "Scenes"], ["study", "Estudiar", "Study"], ["progress", "Progreso", "Progress"]];
     $("nav").innerHTML = items.map(function (it) {
@@ -1629,21 +1642,21 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
     if (ds.level) {
       S.placement = { level: ds.level, fresh: ds.level === "A1", date: today(), scores: [], t: Date.now(), via: "chosen" };
       S.history.push({ level: ds.level, date: today(), scores: [] });
-      OB.pick = false; view = "home"; save(); render(); window.scrollTo(0, 0); return;
+      OB.pick = false; view = "home"; save(); render(); toTop(); return;
     }
     if (ds.go) {
       stopRec(); view = ds.go; if (view !== "study") P = null; if (view !== "scenes") SC = null;
       if (view === "test" && T && T.done) T = null;
-      render(); window.scrollTo(0, 0); return;
+      render(); toTop(); return;
     }
     if (ds.show !== undefined) { openShow(parseInt(ds.show, 10)); return; }
     if (ds.fav) {
       var k = ds.fav, ix = S.favs.indexOf(k);
       if (ix >= 0) S.favs.splice(ix, 1); else S.favs.push(k);
-      var y = window.scrollY; save(); render(); window.scrollTo(0, y); return;
+      var sc = $("scroller"), y = sc ? sc.scrollTop : 0; save(); render(); if (sc) sc.scrollTop = y; return;
     }
     if (ds.pbfav !== undefined) { PB.fav = ds.pbfav === "1"; render(); return; }
-    if (ds.scene) { startScene(ds.scene, false); window.scrollTo(0, 0); return; }
+    if (ds.scene) { startScene(ds.scene, false); toTop(); return; }
     if (ds.scAsk !== undefined && SC && SC.ask && !SC.ask.done) {
       var o = SC.ask.opts[parseInt(ds.scAsk, 10)];
       if (o.ok) { SC.ask.done = true; if (!SC.ask.tries) SC.points += 1; } else { o.wrong = true; SC.ask.tries += 1; }
@@ -1654,7 +1667,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
       if (yo.ok) { SC.you.done = true; SC.you.picked = yi; if (!SC.you.tries) SC.points += 1; } else { yo.wrong = true; SC.you.tries += 1; }
       render(); return;
     }
-    if (ds.deck) { openDeck(ds.deck, "flash", false); window.scrollTo(0, 0); return; }
+    if (ds.deck) { openDeck(ds.deck, "flash", false); toTop(); return; }
     if (ds.mode && P) { openDeck(P.deck.id, ds.mode, P.all, P.synth); return; }
     if (ds.opt !== undefined) { answer(parseInt(ds.opt, 10)); return; }
     if (ds.qopt !== undefined && P && P.picked === null) {
@@ -1666,12 +1679,12 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
       case "ob-pick": OB.pick = true; render(); break;
       case "ob-back": OB.pick = false; render(); break;
       case "ob-country": S.country = null; save(); render(); break;
-      case "ob-quiz": case "start-test": startTest(); window.scrollTo(0, 0); break;
-      case "quiz-exit": T = null; view = "home"; render(); window.scrollTo(0, 0); break;
+      case "ob-quiz": case "start-test": startTest(); toTop(); break;
+      case "quiz-exit": T = null; view = "home"; render(); toTop(); break;
       case "level-back": view = "home"; render(); break;
-      case "test-done": T = null; view = "home"; render(); window.scrollTo(0, 0); break;
-      case "test-pick": T = null; view = "level"; render(); window.scrollTo(0, 0); break;
-      case "next-q": nextQ(); window.scrollTo(0, 0); break;
+      case "test-done": T = null; view = "home"; render(); toTop(); break;
+      case "test-pick": T = null; view = "level"; render(); toTop(); break;
+      case "next-q": nextQ(); toTop(); break;
       case "edit-date": HOME.editDate = true; render(); break;
       case "cancel-date": HOME.editDate = false; render(); break;
       case "plan": {
@@ -1686,7 +1699,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
           var seen = pool.filter(function (r) { return cardState(r.deck, r.i).seen; });
           openSynth({ id: "plan-speak", step: "speak", title: "Dilo en voz alta", sub: "Say today's phrases out loud", refs: shuffle(seen.length >= 4 ? seen : pool).slice(0, 4) }, "speak");
         } else if (step === "scene") { startScene(ds.sceneId, true); }
-        window.scrollTo(0, 0); break;
+        toTop(); break;
       }
       case "copy-link": {
         var inp = $("invite-url"), done = function () { el.textContent = "Copied"; setTimeout(function () { el.textContent = "Copy link"; }, 1500); };
@@ -1702,7 +1715,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
       case "show-prev": if (SHOW && SHOW.pos > 0) { SHOW.pos -= 1; renderShow(); } break;
       case "show-next": if (SHOW && SHOW.pos < PB.list.length - 1) { SHOW.pos += 1; renderShow(); } break;
       case "show-say": if (SHOW) { var rr = PB.list[SHOW.pos]; say(cardR(deckById(rr.d), rr.i)[0]); } break;
-      case "sc-leave": stopRec(); { var fp = SC && SC.fromPlan; SC = null; if (fp) view = "home"; } render(); window.scrollTo(0, 0); break;
+      case "sc-leave": stopRec(); { var fp = SC && SC.fromPlan; SC = null; if (fp) view = "home"; } render(); toTop(); break;
       case "sc-say": if (SC) say(npcText(SC.scene.turns[SC.ti])); break;
       case "sc-say-you": if (SC && SC.you && SC.you.done) say(SC.you.opts[SC.you.picked].es); break;
       case "sc-en": SC.showEn = !SC.showEn; render(); break;
@@ -1712,7 +1725,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
         stopRec();
         if (SC.ti >= SC.scene.turns.length - 1) { finishScene(); render(); }
         else { SC.ti += 1; beginTurn(); render(); say(npcText(SC.scene.turns[SC.ti])); }
-        window.scrollTo(0, 0); break;
+        toTop(); break;
       case "sc-speak":
         if (SC && SC.you && SC.you.done) {
           if (SC.sp && SC.sp.listening) { stopRec(); SC.sp.listening = false; render(); break; }
@@ -1727,7 +1740,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
         }
         break;
       case "start-test-x": break;
-      case "study-level": view = "study"; P = null; render(); window.scrollTo(0, 0); break;
+      case "study-level": view = "study"; P = null; render(); toTop(); break;
       case "leave": stopRec(); { var b = P && P.back; P = null; if (b) view = b; } render(); break;
       case "practice-all": openDeck(P.deck.id, P.mode, true, P.synth); break;
       case "flip": P.flipped = !P.flipped; render(); break;
@@ -1744,7 +1757,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
         if (P && P.sp) {
           stopRec();
           if (!P.sp.graded) { P.sp.graded = true; gradeP(P.queue[P.pos], false); }
-          P.pos += 1; resetSp(); render(); window.scrollTo(0, 0);
+          P.pos += 1; resetSp(); render(); toTop();
         }
         break;
       case "say":
