@@ -1,6 +1,6 @@
 /* Bump CACHE on every push so installed copies pick up the new index.html. */
-const CACHE = "rumbo-v4";
-const SHELL = ["./", "index.html", "manifest.webmanifest", "vendor/supabase.js", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/apple-touch-icon.png"];
+const CACHE = "rumbo-v5";
+const SHELL = ["./", "index.html", "manifest.webmanifest", "vendor/supabase.js", "config.js", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/apple-touch-icon.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -33,6 +33,12 @@ self.addEventListener("fetch", (e) => {
   }
 
   if (url.origin !== location.origin) return;
+
+  // Config: network first so a changed key is picked up right away.
+  if (url.pathname.endsWith("/config.js")) {
+    e.respondWith(fetch(req).then((res) => { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); return res; }).catch(() => caches.match(req)));
+    return;
+  }
 
   // Pages: network first so updates show up, cache when offline.
   if (req.mode === "navigate") {

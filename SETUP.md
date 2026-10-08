@@ -11,8 +11,9 @@ exactly as before and keeps progress on the device only (the "Entrar" button sta
    `rumbo_group_members` table behind the optional group leaderboard. If you already ran the
    earlier version, run just the "Group leaderboard" block at the bottom.
 3. **Keys.** In Settings > API copy the project URL and the anon (publishable) key into the top of
-   the script in `index.html`:
-   `SUPABASE_URL` and `SUPABASE_ANON_KEY`. The anon key is meant to be public. Never put the
+   `config.js`
+   (`supabaseUrl` and `supabaseAnonKey`). Only that file ever holds your keys, so replacing `index.html`
+   for an update never erases them. The anon key is meant to be public. Never put the
    service_role key anywhere in this repo.
 4. **Auth URLs.** In Authentication > URL Configuration set the Site URL to the deployed address
    (for example https://rumbo.yourdomain.com) and add the same address to Redirect URLs. Confirmation
