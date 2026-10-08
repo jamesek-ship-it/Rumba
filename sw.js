@@ -1,5 +1,5 @@
 /* Bump CACHE on every push so installed copies pick up the new index.html. */
-const CACHE = "rumbo-v3";
+const CACHE = "rumbo-v4";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "vendor/supabase.js", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/apple-touch-icon.png"];
 
 self.addEventListener("install", (e) => {
