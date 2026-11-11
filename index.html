@@ -212,6 +212,9 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; pad
   padding: max(0px, env(safe-area-inset-top)) 16px 28px; }
 body.onb .scroller { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
 .nav { position: static; flex: none; }
+.lt { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin: 6px 0; }
+.lt td { padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.lt td:first-child { width: 42%; }
 body.noscroll .scroller { overflow: hidden; }
 
 /* resources */
@@ -570,6 +573,22 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
       ["Siga derecho dos cuadras.", "Go straight two blocks.", "You will hear this one. No need to say it."],
       ["Gire a la izquierda.", "Turn left.", "You will hear this one. “A la derecha” is right."],
       ["¿Dónde está el baño?", "Where is the bathroom?", ""] ] },
+    { id: "p-ask", kind: "phrase", lv: "TRIP", title: "¿Me puede ayudar?", sub: "Asking for help and offering it", cards: [
+      ["¿Me puede ayudar?", "Can you help me? (formal)", "Puede = formal “you”. Me goes before the verb."],
+      ["¿Me puedes ayudar?", "Can you help me? (casual)", "Puedes = casual “you”, for friends."],
+      ["¿Puede ayudarme?", "Can you help me? (pronoun on the end)", "Same meaning. Me can also attach to the end of the infinitive."],
+      ["¿Nos puede ayudar?", "Can you help us?", "Nos = us."],
+      ["¿Le puedo ayudar?", "Can I help you? (formal)", "Le = formal “you”."],
+      ["¿Te puedo ayudar?", "Can I help you? (casual)", "Te = casual “you”."],
+      ["¿En qué le puedo ayudar?", "How can I help you? (formal)", "Staff in shops and restaurants say this a lot."],
+      ["¿Cómo te puedo ayudar?", "How can I help you? (casual)", ""],
+      ["¿Puede hacerlo?", "Can you do it?", "Lo = it. Attached to the end of the infinitive."],
+      ["¿Lo puede hacer?", "Can you do it? (lo before the verb)", "Same meaning as the one above."],
+      ["¿Puede traerla?", "Can you bring it? (feminine thing)", "La = it, for a feminine thing such as la cuenta."],
+      ["¿Me puede mostrar?", "Can you show me?", ""],
+      ["¿Me puede decir?", "Can you tell me?", ""],
+      ["¿Me puede dar la cuenta?", "Can I have the check?", "Literally: can you give me the check?"],
+      ["¿Puede repetirlo, por favor?", "Can you repeat it, please?", ""] ] },
     { id: "p-shop", kind: "phrase", lv: "TRIP", title: "Compras y dinero", sub: "Prices, cards and cash", cards: [
       ["¿Cuánto cuesta esto?", "How much is this?", ""],
       ["Está muy caro.", "That's very expensive.", ""],
@@ -1468,8 +1487,31 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
   }
 
   /* ----- study ----- */
+  var LS = { ask: false };
+  function lessonAskView() {
+    var T = function (rows) { return '<table class="lt" data-nogloss><tbody>' + rows.map(function (r) { return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>'; }).join("") + '</tbody></table>'; };
+    return '<section class="panel" data-nogloss><div class="row" style="justify-content:space-between"><span class="tag">LESSON</span><button class="btn quiet" data-act="lesson-close" data-nogloss>Back</button></div>' +
+      '<div><div class="eyebrow">Mini lesson</div><h2>“Can you…?” and “Can I…?”</h2><p class="lede">One pattern covers most requests. Learn it once and you can build hundreds of questions.</p></div>' +
+      '<div class="group"><h3 class="mono" style="font-size:.95rem">1. The formula</h3>' +
+      '<div class="note info"><b>¿Puede / Puedes + verb?</b><br>Verb stays in the infinitive (the “to ___” form): ayudar, hacer, traer, decir.</div>' +
+      T([["<b>Puede</b>", "formal “you” (usted). Strangers, staff, older people."], ["<b>Puedes</b>", "casual “you” (tú). Friends."], ["<b>Puedo</b>", "“I can”. Use it to offer: ¿Le puedo ayudar?"]]) +
+      '<p class="lede">When in doubt, use <b>puede</b>. It is polite and works everywhere.</p></div>' +
+      '<div class="group"><h3 class="mono" style="font-size:.95rem">2. Where the pronoun goes</h3>' +
+      '<p class="lede">Two spots, same meaning:</p>' +
+      T([["Before the conjugated verb", "¿<b>Me</b> puede ayudar?"], ["Stuck on the end of the infinitive", "¿Puede ayudar<b>me</b>?"]]) +
+      '<p class="lede">Before the verb is a bit more common in speech.</p></div>' +
+      '<div class="group"><h3 class="mono" style="font-size:.95rem">3. Which pronoun</h3>' +
+      T([["<b>me</b>", "me: ¿Me puede ayudar?"], ["<b>te</b>", "you (casual): ¿Te puedo ayudar?"], ["<b>le</b>", "you (formal): ¿Le puedo ayudar?"], ["<b>nos</b>", "us: ¿Nos puede ayudar?"], ["<b>lo</b>", "it (masculine, or unsure): ¿Puede hacerlo?"], ["<b>la</b>", "it (feminine): ¿Puede traerla?"]]) +
+      '<p class="lede">Not sure of the gender? <b>Lo</b> works for almost any “it”.</p></div>' +
+      '<div class="group"><h3 class="mono" style="font-size:.95rem">4. “How can I help you?”</h3>' +
+      T([["¿En qué <b>le</b> puedo ayudar?", "formal, very common in shops"], ["¿Cómo <b>le</b> puedo ayudar?", "formal"], ["¿Cómo <b>te</b> puedo ayudar?", "casual"]]) + '</div>' +
+      '<div class="group"><h3 class="mono" style="font-size:.95rem">5. Quick swaps</h3>' +
+      T([["Can you help me?", "¿Me puede ayudar?"], ["Can you do it?", "¿Puede hacerlo?"], ["Can you bring it?", "¿Puede traerlo?"], ["Can you show me?", "¿Me puede mostrar?"], ["Can you tell me?", "¿Me puede decir?"], ["Can I have the check?", "¿Me puede dar la cuenta?"]]) + '</div>' +
+      '<div class="row"><button class="btn primary" data-act="lesson-practice" data-nogloss>Practice these phrases</button><button class="btn" data-act="lesson-close" data-nogloss>Back to decks</button></div></section>';
+  }
   function studyView() {
     if (P) return sessionView();
+    if (LS.ask) return lessonAskView();
     var tripDecks = visibleDecks().filter(function (d) { return d.kind === "phrase"; });
     var groups = '<div class="group"><h3 class="mono" style="font-size:.95rem">Trip Pack · frases del viaje</h3><div class="decks">' + tripDecks.map(deckBtn).join("") + '</div></div>' +
       LEVELS.map(function (l) {
@@ -1478,7 +1520,8 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
         return '<div class="group"><h3 class="mono" style="font-size:.95rem">' + l + ' · ' + LEVEL_NAMES[l] + '</h3><div class="decks">' + ds.map(deckBtn).join("") + '</div></div>';
       }).join("");
     var banner = SR ? "" : '<div class="note info">Speaking practice needs a browser with speech recognition, such as Chrome, Edge or Safari.</div>';
-    return '<section class="panel"><div class="eyebrow">Estudiar</div><h2>Elige un mazo</h2>' + banner + groups + '</section>';
+    var lessons = '<div class="group"><h3 class="mono" style="font-size:.95rem">Mini lessons</h3><div class="decks"><button class="deck" data-act="lesson-ask"><span class="tag">LESSON</span><span class="t" data-nogloss>“Can you…?” and “Can I…?”</span><span class="s">How to ask for and offer help: puede, me, lo, la</span></button></div></div>';
+    return '<section class="panel"><div class="eyebrow">Estudiar</div><h2>Elige un mazo</h2>' + banner + lessons + groups + '</section>';
   }
   function openDeck(id, mode, practiceAll, synth) {
     var deck = synth || deckById(id); if (!deck) return;
@@ -1874,7 +1917,7 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
       OB.pick = false; view = "home"; save(); render(); toTop(); return;
     }
     if (ds.go) {
-      stopRec(); view = ds.go; if (view !== "study") P = null; if (view !== "scenes") SC = null;
+      stopRec(); view = ds.go; LS.ask = false; if (view !== "study") P = null; if (view !== "scenes") SC = null;
       if (view === "test" && T && T.done) T = null;
       render(); toTop(); return;
     }
@@ -1993,6 +2036,9 @@ body.onb .nav, body.onb .trip, body.onb .bar { display: none; }
       case "leave": stopRec(); { var b = P && P.back; P = null; if (b) view = b; } render(); break;
       case "practice-all": openDeck(P.deck.id, P.mode, true, P.synth); break;
       case "flip": P.flipped = !P.flipped; render(); break;
+      case "lesson-ask": LS.ask = true; render(); toTop(); break;
+      case "lesson-close": LS.ask = false; render(); toTop(); break;
+      case "lesson-practice": LS.ask = false; openDeck("p-ask", "flash", true); toTop(); break;
       case "signout": doSignOut(false); break;
       case "signout-force": doSignOut(true); break;
       case "syncnow": if (A.user) { A.signoutWarn = false; push().then(function (ok) { if (ok) syncDown(); render(); }); } break;
